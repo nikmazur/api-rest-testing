@@ -1,20 +1,25 @@
 package springrest;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 public class Data {
 
+    //Bool for random ping results + getter
     private static boolean pingRand;
     protected static boolean isPingRand() {
         return pingRand;
     }
 
+    //HashMap for storing data about our Employees + getter
     private static HashMap<Integer, HashMap<String, String>> comp = new HashMap<>();
     public static HashMap<Integer, HashMap<String, String>> getComp() {
         return comp;
     }
 
+    //Constructor: 1. Sets bool to random value 2. Populates HashMap with initial Employees data
     public Data() {
         Random random = new Random();
         pingRand = random.nextBoolean();
@@ -44,8 +49,24 @@ public class Data {
         return ind;
     }
 
-    protected void pingOk(HashMap<String, String> res) {
-        res.put("result", "200");
-        res.put("comment", "OK");
+    public static void delEmpl(int index) {
+        comp.remove(index);
     }
+
+    public static boolean delEmplName(String name) {
+
+        Iterator<Map.Entry<Integer, HashMap<String, String>>> outer = comp.entrySet().iterator();
+        while(outer.hasNext()) {
+            Map.Entry<Integer, HashMap<String, String>> outerPair = outer.next();
+            Iterator<Map.Entry<String, String>> inner = (outerPair.getValue()).entrySet().iterator();
+
+            if(inner.next().getValue().equals(name)) {
+                outer.remove();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
