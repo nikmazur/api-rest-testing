@@ -7,11 +7,8 @@ import java.util.Random;
 
 public class Data {
 
-    //Bool for random ping results + getter
-    private static boolean pingRand;
-    protected static boolean isPingRand() {
-        return pingRand;
-    }
+    //Bool for random ping results. Set to public since it is final.
+    public final boolean PING_RAND;
 
     //HashMap for storing data about our Employees + getter
     private static HashMap<Integer, HashMap<String, String>> comp = new HashMap<>();
@@ -22,7 +19,7 @@ public class Data {
     //Constructor: 1. Sets bool to random value 2. Populates HashMap with initial Employees data
     public Data() {
         Random random = new Random();
-        pingRand = random.nextBoolean();
+        PING_RAND = random.nextBoolean();
 
         HashMap<String, String> emp1 = new HashMap<>();
         emp1.put("name", "Mary Jones");
@@ -37,7 +34,8 @@ public class Data {
         comp.put(1, emp2);
     }
 
-    public static int addEmpl(String name, String age, String salary) {
+    //Method for adding new employees to the map.
+    public static void addEmpl(String name, String age, String salary) {
         int ind = comp.size();
 
         HashMap<String, String> newEmpl = new HashMap<>();
@@ -45,14 +43,16 @@ public class Data {
         newEmpl.put("age", age);
         newEmpl.put("salary", salary);
         comp.put(ind++, newEmpl);
-
-        return ind;
     }
 
+    //Delete the employee by index number.
     public static void delEmpl(int index) {
         comp.remove(index);
     }
 
+    /*Delete employee by name.
+    Uses two iterators (outer & inner map) to traverse all name fields and check for matches.
+    If match is found, it is deleted through the iterator and true is returned.*/
     public static boolean delEmplName(String name) {
 
         Iterator<Map.Entry<Integer, HashMap<String, String>>> outer = comp.entrySet().iterator();

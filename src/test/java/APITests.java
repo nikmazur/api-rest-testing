@@ -16,7 +16,7 @@ import io.restassured.specification.RequestSpecification;
 import static io.restassured.http.ContentType.JSON;
 import static org.testng.Assert.assertEquals;
 
-public class APItest {
+public class APITests {
 
     //This method launches the Spring REST server in src.main before running any test or tests
     @BeforeSuite
@@ -134,21 +134,22 @@ public class APItest {
     }
 
     //Negative tests start here.
-    //Try to access a bad URL, part of which is randomly generated.
+    //Try to access a bad URL (part of which is randomly generated).
     @Test (dependsOnMethods = "ping")
     public void negBadURL() {
         //Generate an array of random characters and convert to string.
         byte[] array = new byte[5];
         new Random().nextBytes(array);
-        String rURL = new String(array, Charset.forName("UTF-8"));
+        String rURI = new String(array, Charset.forName("UTF-8"));
 
         RequestSpecification httpRequest = RestAssured.given();
-        //Add the random string to base URL.
-        Response resp = httpRequest.get("http://localhost:8188/" + rURL);
+        //Add the random string to base URI.
+        Response resp = httpRequest.get("http://localhost:8188/" + rURI);
         //Verify we get error 404 (Not Found) in return.
         Assert.assertEquals(404, resp.getStatusCode());
     }
 
+    //Bad input. Adding an employee without a required field (name is missing)
     @Test (dependsOnMethods = "ping")
     public void negAddEmpl() {
         HashMap<String, String> bod = new HashMap<>();
@@ -164,8 +165,9 @@ public class APItest {
                 assertThat().statusCode(400);
     }
 
+    //Bad input. Field salary contains letters instead of numbers
     @Test (dependsOnMethods = "ping")
-    public void negAddEmplBadInput() {
+    public void negBadInput() {
         HashMap<String, String> bod = new HashMap<>();
         bod.put("name", "Anne Clark");
         bod.put("age", "32");
@@ -180,6 +182,7 @@ public class APItest {
                 assertThat().statusCode(400);
     }
 
+    //Wrong HTTP method - GET instead of POST
     @Test (dependsOnMethods = "ping")
     public void negGet() {
         RestAssured.given().
@@ -190,6 +193,7 @@ public class APItest {
                 assertThat().statusCode(405);
     }
 
+    //Try to access delete methods without any parameters. Expecting "not found" message in return.
     @Test (dependsOnMethods = "ping")
     public void negDelNoParams() {
         String resp = (RestAssured.
@@ -202,7 +206,8 @@ public class APItest {
         assertEquals("Employee not found", resp);
     }
 
-    @Test (dependsOnMethods = {"ping", "notEmpty", "checkOneEmployee"})
+    //Try to pass wrong parameters - index as name. Expecting "not found" in return.
+    @Test (dependsOnMethods = "ping")
     public void negDelWrongArg() {
         String resp = (RestAssured.
                 given().
