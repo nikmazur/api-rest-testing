@@ -1,5 +1,7 @@
 package springrest;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,7 +9,7 @@ import java.util.Random;
 
 public class Data {
 
-    //Bool for random ping results. Set to public since it is final.
+    //Bool for random ping results.
     public final boolean PING_RAND;
 
     //HashMap for storing data about our Employees + getter
@@ -36,13 +38,20 @@ public class Data {
 
     //Method for adding new employees to the map.
     public static void addEmpl(String name, String age, String salary) {
-        int ind = comp.size();
+
+        //Cycle through the map to get the largest index.
+        //We'll use that number +1 to make sure we add and not overwrite new values.
+        int ind = 0;
+        for (int i : comp.keySet()) {
+            if(i > ind)
+                ind = i;
+        }
 
         HashMap<String, String> newEmpl = new HashMap<>();
         newEmpl.put("name", name);
         newEmpl.put("age", age);
         newEmpl.put("salary", salary);
-        comp.put(ind++, newEmpl);
+        comp.put(++ind, newEmpl);
     }
 
     //Delete the employee by index number.

@@ -18,23 +18,23 @@ import static org.testng.Assert.assertEquals;
 
 public class APITests {
 
-    //This method launches the Spring REST server in src.main before running any test or tests
+    //This method launches the Spring REST server in main before running any tests
     @BeforeSuite
     public void launchServer() {
         Application.main(new String[]{""});
         RestAssured.baseURI = "http://localhost:8188";
     }
 
-    //Smoke test for  server availability. Checks for the HTTP 200 status code.
-    //All subsequent tests are dependant on this one (dependsOnMethods argument).
-    //Will sometimes fail because of the random bool in Data.
+    /*Smoke test for  server availability. Checks for the HTTP 200 status code.
+    All subsequent tests are dependant on this one (dependsOnMethods argument).
+    Will sometimes fail because of the random bool in Data.*/
     @Test
     public void ping() {
         try {
             RequestSpecification httpRequest = RestAssured.given();
-            Response resp = httpRequest.get("RestAssured.baseURI");
+            Response resp = httpRequest.get(RestAssured.baseURI + "/ping");
             //Checking the status code here. Comment this out to make the test always pass.
-//            Assert.assertEquals(200, resp.getStatusCode());
+            Assert.assertEquals(200, resp.getStatusCode());
         }
         catch(AssertionError ae) {
             //Example of a custom message upon test failure using try-catch blocks.
@@ -71,16 +71,16 @@ public class APITests {
                 body("0.name", Matchers.equalTo("Mary Jones"));
     }
 
-    //Check the function of adding a new employee. This time we'll be using POST instead of GET
+    //Check the functionality of adding a new employee. Using POST instead of GET.
     @Test (dependsOnMethods = "ping")
     public void addNewEmployee() {
-        //Forming the payload with the data about the new employee
+        //Forming the payload with the data about the new employee.
         HashMap<String, String> bod = new HashMap<>();
         bod.put("name", "Anne Clark");
         bod.put("age", "32");
         bod.put("salary", "71790");
 
-        //Send the payload and extract the response, which is expected to have the new data
+        //Send the payload and extract the response, which is expected to have the new data.
         String resp = (RestAssured.given().
                 contentType(JSON).
                 body(bod).
@@ -89,7 +89,7 @@ public class APITests {
                 then().
                 assertThat().statusCode(200).and().contentType(JSON)).extract().response().asString();
 
-        //Extract the name of all employees from the response
+        //Extract the names of all employees from the response.
         ArrayList<String> names = JsonPath.read(resp, "$..name");
 
         //Checking for a match with the name we sent previously.
@@ -98,14 +98,14 @@ public class APITests {
             Assert.fail("Added name was not found!");
     }
 
-    //Try to remove an employee by a numeric index number.
-    //This and the next test are set to run only after the other tests which are dependent on content
-    //have been passed, so as not to interfere with them and cause a wrong fail.
+    /*Try to remove an employee by a numeric index number.
+    This and the next test are set to run only after the other tests which are dependent on content
+    have been passed, so as not to interfere with them and cause a false fail.*/
     @Test (dependsOnMethods = {"ping", "notEmpty", "checkOneEmployee"})
     public void delEmployeeIndex() {
         int index = 1;
 
-        //The /delete method is configured to return the result in a string format, which we can extract and verify
+        //The delete method is configured to return the result in a string format, which we can extract and verify
         String resp = (RestAssured.
                 given().
                 queryParam("ind", index).
@@ -149,7 +149,7 @@ public class APITests {
         Assert.assertEquals(404, resp.getStatusCode());
     }
 
-    //Bad input. Adding an employee without a required field (name is missing)
+    //Bad input. Adding an employee without a required field (name is missing).
     @Test (dependsOnMethods = "ping")
     public void negAddEmpl() {
         HashMap<String, String> bod = new HashMap<>();
@@ -165,7 +165,7 @@ public class APITests {
                 assertThat().statusCode(400);
     }
 
-    //Bad input. Field salary contains letters instead of numbers
+    //Bad input. Field salary contains letters instead of numbers.
     @Test (dependsOnMethods = "ping")
     public void negBadInput() {
         HashMap<String, String> bod = new HashMap<>();
@@ -182,7 +182,7 @@ public class APITests {
                 assertThat().statusCode(400);
     }
 
-    //Wrong HTTP method - GET instead of POST
+    //Wrong HTTP method - GET instead of POST.
     @Test (dependsOnMethods = "ping")
     public void negGet() {
         RestAssured.given().
@@ -193,7 +193,7 @@ public class APITests {
                 assertThat().statusCode(405);
     }
 
-    //Try to access delete methods without any parameters. Expecting "not found" message in return.
+    //Try to access delete methods without any parameters. Expecting "Not found" message in return.
     @Test (dependsOnMethods = "ping")
     public void negDelNoParams() {
         String resp = (RestAssured.
@@ -206,7 +206,7 @@ public class APITests {
         assertEquals("Employee not found", resp);
     }
 
-    //Try to pass wrong parameters - index as name. Expecting "not found" in return.
+    //Try to pass wrong parameters - index as name. Expecting "Not found" in return.
     @Test (dependsOnMethods = "ping")
     public void negDelWrongArg() {
         String resp = (RestAssured.
