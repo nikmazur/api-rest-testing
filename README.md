@@ -11,5 +11,3 @@ The server part can also be run from the main class for manual testing (e.g. fro
 Tests were written with TestNG as the testing framework and REST Assured for managing requests and responses to the server. 
 
 Overall there are currently 6 positive and 6 negative tests.
-
-Spring was configured to save logs to files in the project directory instead of the console.
