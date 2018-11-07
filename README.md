@@ -1,5 +1,5 @@
 # REST-API-Testing
-This project emulates a simple REST server and unit tests. It contains a small database of employees (HashMap is used for storage) and supports basic modification methods like add & delete. 
+This project emulates a simple REST server and unit tests for it. It contains a small database of employees (HashMap is used for storage) and supports basic modification methods like add & delete. 
 
 When started with 'mvn test' an Apache Tomcat web server on localhost HTTP port 8188 is launched, and then all tests are executed against it.
 
