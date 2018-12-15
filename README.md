@@ -1,5 +1,5 @@
 # REST-API-Testing
-This project emulates a simple REST server and unit tests for it. 
+This project emulates a simple REST server and unit tests for it. It contains a small database of employees (HashMap is used for storage) and supports basic modification methods like add & delete. 
 
 When started with 'mvn test' an Apache Tomcat web server on localhost HTTP port 8188 is launched, and then all tests are executed against it.
 
@@ -11,5 +11,3 @@ The server part can also be run from the main class for manual testing (e.g. fro
 Tests were written with TestNG as the testing framework and REST Assured for managing requests and responses to the server. 
 
 Overall there are currently 6 positive and 6 negative tests.
-
-Spring was configured to save logs to files in the project directory instead of the console.
