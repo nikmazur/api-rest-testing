@@ -1,6 +1,6 @@
 package springrest;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,8 +20,7 @@ public class Data {
 
     //Constructor: 1. Sets bool to random value 2. Populates HashMap with initial Employees data
     public Data() {
-        Random random = new Random();
-        PING_RAND = random.nextBoolean();
+        PING_RAND = RandomUtils.nextBoolean();
 
         HashMap<String, String> emp1 = new HashMap<>();
         emp1.put("name", "Mary Jones");

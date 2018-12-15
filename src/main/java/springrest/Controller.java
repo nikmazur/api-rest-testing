@@ -15,7 +15,7 @@ public class Controller extends Data {
             throw new ResourceNotFoundException();
     }
 
-    //Returns current employee list
+    //Returns current employees list
     @RequestMapping("/employees")
     public HashMap<Integer, HashMap<String, String>> comp() {
         return Data.getComp();

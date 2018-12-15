@@ -1,16 +1,15 @@
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import springrest.Application;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 import io.restassured.specification.RequestSpecification;
 import static io.restassured.http.ContentType.JSON;
@@ -26,14 +25,14 @@ public class APITests {
     }
 
     /*Smoke test for  server availability. Checks for the HTTP 200 status code.
-    All subsequent tests are dependant on this one (dependsOnMethods argument).
+    All subsequent tests are dependent on this one (dependsOnMethods argument).
     Will sometimes fail because of the random bool in Data.*/
     @Test
     public void ping() {
         try {
             RequestSpecification httpRequest = RestAssured.given();
             Response resp = httpRequest.get(RestAssured.baseURI + "/ping");
-            //Checking the status code here. Comment this out to make the test always pass.
+            //Checking the status code here. Comment this to make the test pass.
             Assert.assertEquals(200, resp.getStatusCode());
         }
         catch(AssertionError ae) {
@@ -43,7 +42,7 @@ public class APITests {
     }
 
     //Verify that the starting Employees set is not empty.
-    //This and subsequent tests use the Gherkin synthax for Rest Assured requests.
+    //This and subsequent tests use the Gherkin syntax for Rest Assured requests.
     @Test (dependsOnMethods = "ping")
     public void notEmpty() {
 
@@ -74,11 +73,12 @@ public class APITests {
     //Check the functionality of adding a new employee. Using POST instead of GET.
     @Test (dependsOnMethods = "ping")
     public void addNewEmployee() {
-        //Forming the payload with the data about the new employee.
+        //Forming a map with data about the new employee.
         HashMap<String, String> bod = new HashMap<>();
         bod.put("name", "Anne Clark");
-        bod.put("age", "32");
-        bod.put("salary", "71790");
+        //Generate random numeric values for age and salary
+        bod.put("age", RandomStringUtils.randomNumeric(2));
+        bod.put("salary", RandomStringUtils.randomNumeric(5));
 
         //Send the payload and extract the response, which is expected to have the new data.
         String resp = (RestAssured.given().
@@ -105,7 +105,7 @@ public class APITests {
     public void delEmployeeIndex() {
         int index = 1;
 
-        //The delete method is configured to return the result in a string format, which we can extract and verify
+        //Delete method is configured to return the result in string format, which we can extract and verify
         String resp = (RestAssured.
                 given().
                 queryParam("ind", index).
@@ -137,14 +137,12 @@ public class APITests {
     //Try to access a bad URL (part of which is randomly generated).
     @Test (dependsOnMethods = "ping")
     public void negBadURL() {
-        //Generate an array of random characters and convert to string.
-        byte[] array = new byte[5];
-        new Random().nextBytes(array);
-        String rURI = new String(array, Charset.forName("UTF-8"));
+        //Generate a string of random characters.
+        final String RURL = RandomStringUtils.randomAlphabetic(5);
 
         RequestSpecification httpRequest = RestAssured.given();
-        //Add the random string to base URI.
-        Response resp = httpRequest.get("http://localhost:8188/" + rURI);
+        //Add the random string to base URL.
+        Response resp = httpRequest.get("http://localhost:8188/" + RURL);
         //Verify we get error 404 (Not Found) in return.
         Assert.assertEquals(404, resp.getStatusCode());
     }
@@ -153,8 +151,8 @@ public class APITests {
     @Test (dependsOnMethods = "ping")
     public void negAddEmpl() {
         HashMap<String, String> bod = new HashMap<>();
-        bod.put("age", "32");
-        bod.put("salary", "71790");
+        bod.put("age", RandomStringUtils.randomNumeric(2));
+        bod.put("salary", RandomStringUtils.randomNumeric(5));
 
         RestAssured.given().
                 contentType(JSON).
@@ -170,7 +168,7 @@ public class APITests {
     public void negBadInput() {
         HashMap<String, String> bod = new HashMap<>();
         bod.put("name", "Anne Clark");
-        bod.put("age", "32");
+        bod.put("age", RandomStringUtils.randomNumeric(2));
         bod.put("salary", "A lot");
 
         RestAssured.given().
