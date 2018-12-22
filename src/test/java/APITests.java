@@ -24,9 +24,9 @@ public class APITests {
         RestAssured.baseURI = "http://localhost:8188";
     }
 
-    /*Smoke test for  server availability. Checks for the HTTP 200 status code.
-    All subsequent tests are dependent on this one (dependsOnMethods argument).
-    Will sometimes fail because of the random bool in Data.*/
+    /* Smoke test for  server availability. Checks for the HTTP 200 status code.
+    ** All subsequent tests are dependent on this one (dependsOnMethods argument).
+    ** Will sometimes fail because of the random bool in Data.*/
     @Test
     public void ping() {
         try {
@@ -97,9 +97,9 @@ public class APITests {
             Assert.fail("Added name was not found!");
     }
 
-    /*Try to remove an employee by a numeric index number.
-    This and the next test are set to run only after the other tests which are dependent on content
-    have been passed, so as not to interfere with them and cause a false fail.*/
+    /* Try to remove an employee by a numeric index number.
+    ** This and the next test are set to run only after the other tests which are dependent on content
+    ** have been passed, so as not to interfere with them and cause a false fail.*/
     @Test (dependsOnMethods = {"ping", "notEmpty", "checkOneEmployee"})
     public void delEmployeeIndex() {
         int index = 1;
@@ -146,9 +146,9 @@ public class APITests {
         Assert.assertEquals(404, resp.getStatusCode());
     }
 
-    //Bad input. Adding an employee without a required field (name is missing).
-    //In this test we're also expecting an Assertion exception by param 'expectedExceptions'
-    //(Request will return status code 400 instead of 200, which will trigger an exception).
+    /* Bad input. Adding an employee without a required field (name is missing).
+    ** In this test we're also expecting an Assertion exception by param 'expectedExceptions'
+    ** (Request will return status code 400 instead of 200, which will trigger an exception).*/
     @Test (expectedExceptions = AssertionError.class, dependsOnMethods = "ping")
     public void negAddEmpl() {
         HashMap<String, String> bod = new HashMap<>();
