@@ -32,7 +32,7 @@ public class APITests {
         try {
             RequestSpecification httpRequest = RestAssured.given();
             Response resp = httpRequest.get(RestAssured.baseURI + "/ping");
-            //Checking the status code here. Comment this to make the test pass.
+            //Checking the status code here. Comment this to disable random failing.
             Assert.assertEquals(200, resp.getStatusCode());
         }
         catch(AssertionError ae) {
@@ -51,9 +51,9 @@ public class APITests {
                 get("/employees").
                 then().
                 /* We're checking 3 things simultaneously:
-                1. HTTP 200 code (OK)
-                2. Response is in JSON format
-                3. Body of the JSON response is not empty (isEmpty() == false) */
+                ** 1. HTTP 200 code (OK)
+                ** 2. Response is in JSON format
+                ** 3. Body of the JSON response is not empty (isEmpty() == false) */
                 assertThat().statusCode(200).and().contentType(JSON).and().
                 body("isEmpty()", Matchers.is(false));
     }
@@ -61,7 +61,6 @@ public class APITests {
     //Check the contents of JSON for specific data (in this case the name of the first employee)
     @Test (dependsOnMethods = "ping")
     public void checkOneEmployee() {
-
         RestAssured.given().
                 when().
                 get("/employees").
@@ -148,7 +147,9 @@ public class APITests {
     }
 
     //Bad input. Adding an employee without a required field (name is missing).
-    @Test (dependsOnMethods = "ping")
+    //In this test we're also expecting an Assertion exception by param 'expectedExceptions'
+    //(Request will return status code 400 instead of 200, which will trigger an exception).
+    @Test (expectedExceptions = AssertionError.class, dependsOnMethods = "ping")
     public void negAddEmpl() {
         HashMap<String, String> bod = new HashMap<>();
         bod.put("age", RandomStringUtils.randomNumeric(2));
@@ -160,7 +161,7 @@ public class APITests {
                 when().
                 post("/employees/add").
                 then().
-                assertThat().statusCode(400);
+                assertThat().statusCode(200);
     }
 
     //Bad input. Field salary contains letters instead of numbers.
@@ -191,7 +192,7 @@ public class APITests {
                 assertThat().statusCode(405);
     }
 
-    //Try to access delete methods without any parameters. Expecting "Not found" message in return.
+    //Try to access delete method without any parameters. Expecting "Not found" message in return.
     @Test (dependsOnMethods = "ping")
     public void negDelNoParams() {
         String resp = (RestAssured.
@@ -204,7 +205,7 @@ public class APITests {
         assertEquals("Employee not found", resp);
     }
 
-    //Try to pass wrong parameters - index as name. Expecting "Not found" in return.
+    //Try to pass wrong parameters - index instead of name. Expecting "Not found" in return.
     @Test (dependsOnMethods = "ping")
     public void negDelWrongArg() {
         String resp = (RestAssured.
