@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import springrest.Application;
 
@@ -25,8 +26,8 @@ public class APITests {
     }
 
     /* Smoke test for  server availability. Checks for the HTTP 200 status code.
-    ** All subsequent tests are dependent on this one (dependsOnMethods argument).
-    ** Will sometimes fail because of the random bool in Data.*/
+     * All subsequent tests are dependent on this one (dependsOnMethods argument).
+     * Will sometimes fail because of the random bool in Data.*/
     @Test
     public void ping() {
         try {
@@ -58,15 +59,17 @@ public class APITests {
                 body("isEmpty()", Matchers.is(false));
     }
 
-    //Check the contents of JSON for specific data (in this case the name of the first employee)
-    @Test (dependsOnMethods = "ping")
-    public void checkOneEmployee() {
+    //Check the contents of JSON for specific data (in this case the name of employee by their index).
+    //This test uses a data provider 'getEmpl' (listed at end of the class) and therefore will run 2 times.
+    @Test (dataProvider = "getEmpl", dependsOnMethods = "ping")
+    //Data is passed as parameters
+    public void checkEmployee(final String IND, final String NAME) {
         RestAssured.given().
                 when().
                 get("/employees").
                 then().
                 assertThat().statusCode(200).and().contentType(JSON).and().
-                body("0.name", Matchers.equalTo("Mary Jones"));
+                body(IND + ".name", Matchers.equalTo(NAME));
     }
 
     //Check the functionality of adding a new employee. Using POST instead of GET.
@@ -98,9 +101,9 @@ public class APITests {
     }
 
     /* Try to remove an employee by a numeric index number.
-    ** This and the next test are set to run only after the other tests which are dependent on content
-    ** have been passed, so as not to interfere with them and cause a false fail.*/
-    @Test (dependsOnMethods = {"ping", "notEmpty", "checkOneEmployee"})
+     * This and the next test are set to run only after the other tests which are dependent on content
+     * have been passed, so as not to interfere with them and cause a false fail.*/
+    @Test (dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeIndex() {
         int index = 1;
 
@@ -117,7 +120,7 @@ public class APITests {
     }
 
     //Try to remove an employee by their name.
-    @Test (dependsOnMethods = {"ping", "notEmpty", "checkOneEmployee"})
+    @Test (dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
         String name = "Mary Jones";
 
@@ -217,6 +220,24 @@ public class APITests {
                 assertThat().statusCode(200)).extract().response().asString();
 
         assertEquals("Employee not found", resp);
+    }
+
+    //Data provider used in the 'checkEmployee' test
+    @DataProvider
+    public Object[][] getEmpl()
+    {
+        //Create test data object
+        Object[][] data = new Object[2][2];
+
+        //Add data about initial 2 employees (Index & Name)
+        data[0][0] = "0";
+        data[0][1] = "Mary Jones";
+
+        //2nd row. Test using this data provider will run twice.
+        data[1][0] = "1";
+        data[1][1] = "John Smith";
+
+        return data;
     }
 
 }
