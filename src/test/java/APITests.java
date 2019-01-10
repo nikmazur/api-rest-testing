@@ -34,7 +34,7 @@ public class APITests {
             RequestSpecification httpRequest = RestAssured.given();
             Response resp = httpRequest.get(RestAssured.baseURI + "/ping");
             //Checking the status code here. Comment this to disable random failing.
-            Assert.assertEquals(200, resp.getStatusCode());
+            Assert.assertEquals(resp.getStatusCode(), 200);
         }
         catch(AssertionError ae) {
             //Example of a custom message upon test failure using try-catch blocks.
@@ -116,7 +116,7 @@ public class APITests {
                 then().
                 assertThat().statusCode(200)).extract().response().asString();
 
-        assertEquals("Employee deleted", resp);
+        assertEquals(resp, "Employee deleted");
     }
 
     //Try to remove an employee by their name.
@@ -132,7 +132,7 @@ public class APITests {
                 then().
                 assertThat().statusCode(200)).extract().response().asString();
 
-        assertEquals("Employee deleted", resp);
+        assertEquals(resp, "Employee deleted");
     }
 
     //Negative tests start here.
@@ -146,42 +146,7 @@ public class APITests {
         //Add the random string to base URL.
         Response resp = httpRequest.get("http://localhost:8188/" + RURL);
         //Verify we get error 404 (Not Found) in return.
-        Assert.assertEquals(404, resp.getStatusCode());
-    }
-
-    /* Bad input. Adding an employee without a required field (name is missing).
-    ** In this test we're also expecting an Assertion exception by param 'expectedExceptions'
-    ** (Request will return status code 400 instead of 200, which will trigger an exception).*/
-    @Test (expectedExceptions = AssertionError.class, dependsOnMethods = "ping")
-    public void negAddEmpl() {
-        HashMap<String, String> bod = new HashMap<>();
-        bod.put("age", RandomStringUtils.randomNumeric(2));
-        bod.put("salary", RandomStringUtils.randomNumeric(5));
-
-        RestAssured.given().
-                contentType(JSON).
-                body(bod).
-                when().
-                post("/employees/add").
-                then().
-                assertThat().statusCode(200);
-    }
-
-    //Bad input. Field salary contains letters instead of numbers.
-    @Test (dependsOnMethods = "ping")
-    public void negBadInput() {
-        HashMap<String, String> bod = new HashMap<>();
-        bod.put("name", "Anne Clark");
-        bod.put("age", RandomStringUtils.randomNumeric(2));
-        bod.put("salary", "A lot");
-
-        RestAssured.given().
-                contentType(JSON).
-                body(bod).
-                when().
-                post("/employees/add").
-                then().
-                assertThat().statusCode(400);
+        Assert.assertEquals(resp.getStatusCode(), 404);
     }
 
     //Wrong HTTP method - GET instead of POST.
@@ -205,7 +170,7 @@ public class APITests {
                 then().
                 assertThat().statusCode(200)).extract().response().asString();
 
-        assertEquals("Employee not found", resp);
+        assertEquals(resp, "Employee not found");
     }
 
     //Try to pass wrong parameters - index instead of name. Expecting "Not found" in return.
@@ -219,7 +184,76 @@ public class APITests {
                 then().
                 assertThat().statusCode(200)).extract().response().asString();
 
-        assertEquals("Employee not found", resp);
+        assertEquals(resp, "Employee not found");
+    }
+
+    /* Bad input. Adding an employee without a required field (name is missing).
+    ** In this test we're also expecting an Assertion exception by param 'expectedExceptions'
+    ** (Request will return status code 400 instead of 200, which will trigger an exception).*/
+    @Test (expectedExceptions = AssertionError.class, dependsOnMethods = "ping")
+    public void negAddEmpl() {
+        HashMap<String, String> bod = new HashMap<>();
+        bod.put("age", RandomStringUtils.randomNumeric(2));
+        bod.put("salary", RandomStringUtils.randomNumeric(5));
+
+        RestAssured.given().
+                contentType(JSON).
+                body(bod).
+                when().
+                post("/employees/add").
+                then().
+                assertThat().statusCode(200);
+    }
+
+    //Bad input. Field salary contains letters instead of numbers.
+    @Test (dependsOnMethods = "ping")
+    public void negTextInput() {
+        HashMap<String, String> bod = new HashMap<>();
+        bod.put("name", "Anne Clark");
+        bod.put("age", RandomStringUtils.randomNumeric(2));
+        bod.put("salary", "A lot");
+
+        RestAssured.given().
+                contentType(JSON).
+                body(bod).
+                when().
+                post("/employees/add").
+                then().
+                assertThat().statusCode(400);
+    }
+
+    //Bad input. Generating a random 5-digit number separated by ','. Will fail on conversion to double.
+    @Test (dependsOnMethods = "ping")
+    public void negNumCommas() {
+        HashMap<String, String> bod = new HashMap<>();
+        bod.put("name", "Anne Clark");
+        bod.put("age", RandomStringUtils.randomNumeric(2));
+        bod.put("salary", RandomStringUtils.randomNumeric(2) + "," + RandomStringUtils.randomNumeric(3));
+
+        RestAssured.given().
+                contentType(JSON).
+                body(bod).
+                when().
+                post("/employees/add").
+                then().
+                assertThat().statusCode(400);
+    }
+
+    //Bad input. Name does not contain any letters, only spaces.
+    @Test (dependsOnMethods = "ping")
+    public void negTextSpaces() {
+        HashMap<String, String> bod = new HashMap<>();
+        bod.put("name", "   ");
+        bod.put("age", RandomStringUtils.randomNumeric(2));
+        bod.put("salary", RandomStringUtils.randomNumeric(5));
+
+        RestAssured.given().
+                contentType(JSON).
+                body(bod).
+                when().
+                post("/employees/add").
+                then().
+                assertThat().statusCode(400);
     }
 
     //Data provider used in the 'checkEmployee' test

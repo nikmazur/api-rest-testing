@@ -39,7 +39,7 @@ public class Controller extends Data {
         String salary = input.get("salary");
 
         //We also check that all fields are not empty. Data is then passed to the method.
-        if(name != null && name.length() >0 && age != null && age.length() >0 &&
+        if(name != null && name.trim().length() >0 && age != null && age.length() >0 &&
                 salary.length() >0 && salary != null)
             Data.addEmpl(name, age, salary);
         else
