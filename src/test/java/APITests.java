@@ -2,6 +2,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.hamcrest.Matchers;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
@@ -18,7 +19,7 @@ import static org.testng.Assert.assertEquals;
 
 public class APITests {
 
-    //This method launches the Spring REST server in main before running any tests
+    //This method launches the Spring REST server from main before running any tests
     @BeforeSuite
     public void launchServer() {
         Application.main(new String[]{""});
@@ -27,17 +28,18 @@ public class APITests {
 
     /* Smoke test for  server availability. Checks for the HTTP 200 status code.
      * All subsequent tests are dependent on this one (dependsOnMethods argument).
-     * Will sometimes fail because of the random bool in Data.*/
+     * Will sometimes fail because of the random bool in Data. */
     @Test
     public void ping() {
         try {
+            //Form HTTP request, save response
             RequestSpecification httpRequest = RestAssured.given();
             Response resp = httpRequest.get(RestAssured.baseURI + "/ping");
-            //Checking the status code here. Comment this to disable random failing.
+            //Checking the status code here. Comment this to disable random failing
             Assert.assertEquals(resp.getStatusCode(), 200);
         }
         catch(AssertionError ae) {
-            //Example of a custom message upon test failure using try-catch blocks.
+            //Example of a custom message upon test failure using try-catch blocks
             Assert.fail("Ping Failed! Resource was not available.");
         }
     }
@@ -52,17 +54,17 @@ public class APITests {
                 get("/employees").
                 then().
                 /* We're checking 3 things simultaneously:
-                ** 1. HTTP 200 code (OK)
-                ** 2. Response is in JSON format
-                ** 3. Body of the JSON response is not empty (isEmpty() == false) */
+                 * 1. HTTP 200 code (OK)
+                 * 2. Response is in JSON format
+                 * 3. Body of the JSON response is not empty (isEmpty() == false) */
                 assertThat().statusCode(200).and().contentType(JSON).and().
                 body("isEmpty()", Matchers.is(false));
     }
 
     //Check the contents of JSON for specific data (in this case the name of employee by their index).
-    //This test uses a data provider 'getEmpl' (listed at end of the class) and therefore will run 2 times.
+    //This test uses a data provider 'getEmpl' (listed at end of the class) and will run 2 times.
     @Test (dataProvider = "getEmpl", dependsOnMethods = "ping")
-    //Data is passed as parameters
+    //Data is passed as parameters IND & NAME
     public void checkEmployee(final String IND, final String NAME) {
         RestAssured.given().
                 when().
@@ -72,17 +74,17 @@ public class APITests {
                 body(IND + ".name", Matchers.equalTo(NAME));
     }
 
-    //Check the functionality of adding a new employee. Using POST instead of GET.
+    //Check the functionality of adding a new employee. Using POST instead of GET
     @Test (dependsOnMethods = "ping")
     public void addNewEmployee() {
-        //Forming a map with data about the new employee.
-        HashMap<String, String> bod = new HashMap<>();
+        //Forming a map with data about the new employee
+        HashMap<String, Object> bod = new HashMap<>();
         bod.put("name", "Anne Clark");
         //Generate random numeric values for age and salary
-        bod.put("age", RandomStringUtils.randomNumeric(2));
-        bod.put("salary", RandomStringUtils.randomNumeric(5));
+        bod.put("age", RandomUtils.nextInt(1, 100));
+        bod.put("salary", RandomUtils.nextInt(10000, 100000));
 
-        //Send the payload and extract the response, which is expected to have the new data.
+        //Send the payload and extract the response, which is expected to have the new data
         String resp = (RestAssured.given().
                 contentType(JSON).
                 body(bod).
@@ -91,10 +93,10 @@ public class APITests {
                 then().
                 assertThat().statusCode(200).and().contentType(JSON)).extract().response().asString();
 
-        //Extract the names of all employees from the response.
+        //Extract the names of all employees from the response to an ArrayList
         ArrayList<String> names = JsonPath.read(resp, "$..name");
 
-        //Checking for a match with the name we sent previously.
+        //Checking ArrayList for a match with the name we sent previously.
         //If the name is not in the list, then the addition did not work.
         if(!names.contains("Anne Clark"))
             Assert.fail("Added name was not found!");
@@ -102,7 +104,7 @@ public class APITests {
 
     /* Try to remove an employee by a numeric index number.
      * This and the next test are set to run only after the other tests which are dependent on content
-     * have been passed, so as not to interfere with them and cause a false fail.*/
+     * have been passed, so as not to interfere with them and cause a false fail. */
     @Test (dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeIndex() {
         int index = 1;
@@ -119,7 +121,7 @@ public class APITests {
         assertEquals(resp, "Employee deleted");
     }
 
-    //Try to remove an employee by their name.
+    //Try to remove an employee by their name
     @Test (dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
         String name = "Mary Jones";
@@ -135,17 +137,36 @@ public class APITests {
         assertEquals(resp, "Employee deleted");
     }
 
-    //Negative tests start here.
+    //Add a new employee with the salary separated by a comma (sent as a String).
+    //Comma will be removed and the employee will be added successfully.
+    @Test (dependsOnMethods = "ping")
+    public void numComma() {
+        HashMap<String, Object> bod = new HashMap<>();
+        bod.put("name", "Sue Jackson");
+        bod.put("age", RandomUtils.nextInt(1, 100));
+        //Generate random salary separated by ','
+        bod.put("salary", RandomStringUtils.randomNumeric(2) + "," + RandomStringUtils.randomNumeric(3));
+
+        RestAssured.given().
+                contentType(JSON).
+                body(bod).
+                when().
+                post("/employees/add").
+                then().
+                assertThat().statusCode(200);
+    }
+
+    //Negative tests.
     //Try to access a bad URL (part of which is randomly generated).
     @Test (dependsOnMethods = "ping")
     public void negBadURL() {
-        //Generate a string of random characters.
+        //Generate a string of random characters
         final String RURL = RandomStringUtils.randomAlphabetic(5);
 
         RequestSpecification httpRequest = RestAssured.given();
-        //Add the random string to base URL.
+        //Add the random string to base URL
         Response resp = httpRequest.get("http://localhost:8188/" + RURL);
-        //Verify we get error 404 (Not Found) in return.
+        //Verify we get error 404 (Not Found) in return
         Assert.assertEquals(resp.getStatusCode(), 404);
     }
 
@@ -188,13 +209,13 @@ public class APITests {
     }
 
     /* Bad input. Adding an employee without a required field (name is missing).
-    ** In this test we're also expecting an Assertion exception by param 'expectedExceptions'
-    ** (Request will return status code 400 instead of 200, which will trigger an exception).*/
+     * In this test we're also expecting an exception by param 'expectedExceptions'
+     * (Request will return status code 400 instead of 200, which will trigger an Assertion exception).*/
     @Test (expectedExceptions = AssertionError.class, dependsOnMethods = "ping")
     public void negAddEmpl() {
-        HashMap<String, String> bod = new HashMap<>();
-        bod.put("age", RandomStringUtils.randomNumeric(2));
-        bod.put("salary", RandomStringUtils.randomNumeric(5));
+        HashMap<String, Object> bod = new HashMap<>();
+        bod.put("age", RandomUtils.nextInt(1, 100));
+        bod.put("salary", RandomUtils.nextInt(10000, 100000));
 
         RestAssured.given().
                 contentType(JSON).
@@ -208,27 +229,10 @@ public class APITests {
     //Bad input. Field salary contains letters instead of numbers.
     @Test (dependsOnMethods = "ping")
     public void negTextInput() {
-        HashMap<String, String> bod = new HashMap<>();
+        HashMap<String, Object> bod = new HashMap<>();
         bod.put("name", "Anne Clark");
-        bod.put("age", RandomStringUtils.randomNumeric(2));
+        bod.put("age", RandomUtils.nextInt(1, 100));
         bod.put("salary", "A lot");
-
-        RestAssured.given().
-                contentType(JSON).
-                body(bod).
-                when().
-                post("/employees/add").
-                then().
-                assertThat().statusCode(400);
-    }
-
-    //Bad input. Generating a random 5-digit number separated by ','. Will fail on conversion to double.
-    @Test (dependsOnMethods = "ping")
-    public void negNumCommas() {
-        HashMap<String, String> bod = new HashMap<>();
-        bod.put("name", "Anne Clark");
-        bod.put("age", RandomStringUtils.randomNumeric(2));
-        bod.put("salary", RandomStringUtils.randomNumeric(2) + "," + RandomStringUtils.randomNumeric(3));
 
         RestAssured.given().
                 contentType(JSON).
@@ -242,10 +246,10 @@ public class APITests {
     //Bad input. Name does not contain any letters, only spaces.
     @Test (dependsOnMethods = "ping")
     public void negTextSpaces() {
-        HashMap<String, String> bod = new HashMap<>();
+        HashMap<String, Object> bod = new HashMap<>();
         bod.put("name", "   ");
-        bod.put("age", RandomStringUtils.randomNumeric(2));
-        bod.put("salary", RandomStringUtils.randomNumeric(5));
+        bod.put("age", RandomUtils.nextInt(1, 100));
+        bod.put("salary", RandomUtils.nextInt(10000, 100000));
 
         RestAssured.given().
                 contentType(JSON).
@@ -260,7 +264,7 @@ public class APITests {
     @DataProvider
     public Object[][] getEmpl()
     {
-        //Create test data object
+        //Create test array data object
         Object[][] data = new Object[2][2];
 
         //Add data about initial 2 employees (Index & Name)
