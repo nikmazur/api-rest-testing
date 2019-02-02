@@ -1,10 +1,6 @@
 package springrest;
-
 import org.apache.commons.lang3.RandomUtils;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class Data {
 
@@ -31,16 +27,13 @@ public class Data {
     //Method for adding new employees to the map.
     public static void addEmpl(String name, double age, double salary) {
 
-        //Cycle through the map to get the largest index.
-        //We'll use that number +1 to make sure we add and not overwrite new values.
-        int ind = 0;
-        for (int i : comp.keySet()) {
-            if(i > ind)
-                ind = i;
-        }
+        /* https://stackoverflow.com/a/922533
+         * Find the largest current index number in map using TreeMap.
+         * We'll use the last key +1 to make sure we add and not overwrite new values. */
+        SortedSet<Integer> keys = new TreeSet<>(comp.keySet());
 
         Employee newEmpl = new Employee(name, age, salary);
-        comp.put(++ind, newEmpl);
+        comp.put(keys.last() + 1, newEmpl);
     }
 
     //Delete the employee by index number.
