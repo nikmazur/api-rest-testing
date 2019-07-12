@@ -3,6 +3,7 @@ package springrest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
@@ -17,31 +18,33 @@ public class Controller extends Data {
 
     //Returns current employees list
     @RequestMapping("/employees")
-    public HashMap<Integer, Employee> comp() {
+    public ArrayList<Employee> comp() {
         return Data.getComp();
     }
 
     //Adds new employee. Returns the resulting contents of the map with the new data.
     @RequestMapping(value = "/employees/add", method = RequestMethod.POST)
-    public HashMap<Integer, Employee> addEmpl(@RequestBody HashMap<String, String> input) {
+    public ArrayList<Employee> addEmpl(@RequestBody HashMap<String, String> input) {
         /* Check whether only numbers are passed in the numeric fields age & salary.
          * This is done by trying to convert them to double. In case of an exception error 405 is returned. */
         double age;
-        double salary;
+        int ID;
         try {
             age = Double.parseDouble(input.get("age"));
             //We also check and remove any commas from salary using the replace() method
-            salary = Double.parseDouble(input.get("salary").replace(",", ""));
+            ID = Integer.parseInt(input.get("id").replace(",", ""));
         } catch(NumberFormatException nfe) {
             throw new ResourceBadRequestException();
         }
 
         String name = input.get("name");
+        String title = input.get("title");
 
         //Checking input data: name not null, empty, or only spaces (using trim()). Age & salary not 0.
         //Data is then passed to the method.
-        if(name != null && name.trim().length() > 0 && age != 0 && salary != 0)
-            Data.addEmpl(name, age, salary);
+        if(name != null && name.trim().length() > 0 && title != null && title.trim().length() > 0 &&
+                age != 0 && ID != 0)
+            Data.addEmpl(ID, name, title, age);
         else
             throw new ResourceBadRequestException();
 
@@ -55,9 +58,13 @@ public class Controller extends Data {
             (@RequestParam(required = false, value = "ind") Integer index,
              @RequestParam(required = false, value = "name") String name) {
 
-        if(getComp().get(index) != null) {
-            delEmpl(index);
-            return "Employee deleted";
+        if(index != null) {
+            if(getComp().get(index) != null) {
+                delEmpl(index);
+                return "Employee deleted";
+            }
+            else
+                return "Employee not found";
         }
         else if(name != null && name.length() > 0) {
             if(delEmplName(name))

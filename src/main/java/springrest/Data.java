@@ -1,15 +1,20 @@
 package springrest;
+
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.RandomUtils;
-import java.util.*;
+
+import java.util.ArrayList;
+
 
 public class Data {
 
     //Bool for random ping results.
     public final boolean PING_RAND;
+    private static TestData data;
 
     //HashMap for storing data about our Employees + getter
-    private static HashMap<Integer, Employee> comp = new HashMap<>();
-    public static HashMap<Integer, Employee> getComp() {
+    private static ArrayList<Employee> comp = new ArrayList<>();
+    public static ArrayList<Employee> getComp() {
         return comp;
     }
 
@@ -17,23 +22,14 @@ public class Data {
     public Data() {
         PING_RAND = RandomUtils.nextBoolean();
 
-        Employee emp1 = new Employee("Mary Jones", 39, 79400);
-        comp.put(0, emp1);
-
-        Employee emp2 = new Employee("John Smith", 27, 67500);
-        comp.put(1, emp2);
+        data = ConfigFactory.create(TestData.class);
+        comp.add(0, new Employee(data.emp1ID(), data.emp1Name(), data.emp1Title(), data.emp1Age()));
+        comp.add(1, new Employee(data.emp2ID(), data.emp2Name(), data.emp2Title(), data.emp2Age()));
     }
 
     //Method for adding new employees to the map.
-    public static void addEmpl(String name, double age, double salary) {
-
-        /* https://stackoverflow.com/a/922533
-         * Find the largest current index number in map using TreeMap.
-         * We'll use the last key +1 to make sure we add and not overwrite new values. */
-        SortedSet<Integer> keys = new TreeSet<>(comp.keySet());
-
-        Employee newEmpl = new Employee(name, age, salary);
-        comp.put(keys.last() + 1, newEmpl);
+    public static void addEmpl(int ID, String name, String title, double age) {
+        comp.add(new Employee(ID, name, title, age));
     }
 
     //Delete the employee by index number.
@@ -44,19 +40,10 @@ public class Data {
     /* Delete employee by name. Uses an iterator to traverse all name fields and check for matches.
      * If match is found, it is deleted through the iterator and true is returned. */
     public static boolean delEmplName(String name) {
-
-        Iterator iter = comp.entrySet().iterator();
-        while(iter.hasNext()) {
-            Map.Entry pair = (Map.Entry)iter.next();
-            Employee empl = (Employee) pair.getValue();
-
-            if(empl.getName().equals(name)) {
-                iter.remove();
-                return true;
-            }
-        }
-
-        return false;
+        if(comp.removeIf(x -> x.getName().equals(name)))
+            return true;
+        else
+            return false;
     }
 
 }

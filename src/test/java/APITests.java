@@ -1,30 +1,18 @@
-import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.hamcrest.Matchers;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import springrest.Application;
+import springrest.Employee;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import io.restassured.specification.RequestSpecification;
 import static io.restassured.http.ContentType.JSON;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
-public class APITests {
-
-    //This method launches the Spring REST server from main before running any tests
-    @BeforeSuite
-    public void launchServer() {
-        Application.main(new String[]{""});
-        RestAssured.baseURI = "http://localhost:8188";
-    }
+public class APITests extends Methods {
 
     /* Smoke test for  server availability. Checks for the HTTP 200 status code.
      * All subsequent tests are dependent on this one (dependsOnMethods argument).
@@ -32,11 +20,8 @@ public class APITests {
     @Test
     public void ping() {
         try {
-            //Form HTTP request, save response
-            RequestSpecification httpRequest = RestAssured.given();
-            Response resp = httpRequest.get(RestAssured.baseURI + "/ping");
-            //Checking the status code here. Comment this to disable random failing
-            Assert.assertEquals(resp.getStatusCode(), 200);
+            //Form HTTP request, check response status code. Comment this to disable random failing.
+            assertEquals(Methods.getStatus(), 200);
         }
         catch(AssertionError ae) {
             //Example of a custom message upon test failure using try-catch blocks
@@ -45,61 +30,26 @@ public class APITests {
     }
 
     //Verify that the starting Employees set is not empty.
-    //This and subsequent tests use the Gherkin syntax for Rest Assured requests.
     @Test (dependsOnMethods = "ping")
     public void notEmpty() {
-
-        RestAssured.given().
-                when().
-                get("/employees").
-                then().
-                /* We're checking 3 things simultaneously:
-                 * 1. HTTP 200 code (OK)
-                 * 2. Response is in JSON format
-                 * 3. Body of the JSON response is not empty (isEmpty() == false) */
-                assertThat().statusCode(200).and().contentType(JSON).and().
-                body("isEmpty()", Matchers.is(false));
+        assertFalse(getEmployees().isEmpty());
     }
 
     //Check the contents of JSON for specific data (in this case the name of employee by their index).
     //This test uses a data provider 'getEmpl' (listed at end of the class) and will run 2 times.
     @Test (dataProvider = "getEmpl", dependsOnMethods = "ping")
-    //Data is passed as parameters IND & NAME
-    public void checkEmployee(final String IND, final String NAME) {
-        RestAssured.given().
-                when().
-                get("/employees").
-                then().
-                assertThat().statusCode(200).and().contentType(JSON).and().
-                body(IND + ".name", Matchers.equalTo(NAME));
+    public void checkEmployee(final int ID, final String NAME) {
+        assertNotEquals(getEmployees().stream()
+                .filter(x -> x.getId() == ID && x.getName().equals(NAME))
+                .count(), 0);
     }
 
-    //Check the functionality of adding a new employee. Using POST instead of GET
+    //Check the functionality of adding a new employee.
     @Test (dependsOnMethods = "ping")
     public void addNewEmployee() {
-        //Forming a map with data about the new employee
-        HashMap<String, Object> bod = new HashMap<>();
-        bod.put("name", "Anne Clark");
-        //Generate random numeric values for age and salary
-        bod.put("age", RandomUtils.nextInt(1, 100));
-        bod.put("salary", RandomUtils.nextInt(10000, 100000));
-
-        //Send the payload and extract the response, which is expected to have the new data
-        String resp = (RestAssured.given().
-                contentType(JSON).
-                body(bod).
-                when().
-                post("/employees/add").
-                then().
-                assertThat().statusCode(200).and().contentType(JSON)).extract().response().asString();
-
-        //Extract the names of all employees from the response to an ArrayList
-        ArrayList<String> names = JsonPath.read(resp, "$..name");
-
-        //Checking ArrayList for a match with the name we sent previously.
-        //If the name is not in the list, then the addition did not work.
-        if(!names.contains("Anne Clark"))
-            Assert.fail("Added name was not found!");
+        Employee newEmpl = new Employee
+                (RandomUtils.nextInt(0, 100000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 100));
+        assert(addEmployee(newEmpl).stream().anyMatch(x -> x.equals(newEmpl)));
     }
 
     /* Try to remove an employee by a numeric index number.
@@ -107,40 +57,21 @@ public class APITests {
      * have been passed, so as not to interfere with them and cause a false fail. */
     @Test (dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeIndex() {
-        int index = 1;
-
-        //Delete method is configured to return the result in string format, which we can extract and verify
-        String resp = (RestAssured.
-                given().
-                queryParam("ind", index).
-                when().
-                post("/employees/delete").
-                then().
-                assertThat().statusCode(200)).extract().response().asString();
-
-        assertEquals(resp, "Employee deleted");
+        assertEquals(delEmployee("ind", 1), "Employee deleted");
     }
 
     //Try to remove an employee by their name
     @Test (dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
-        String name = "Mary Jones";
-
-        String resp = (RestAssured.
-                given().
-                queryParam("name", name).
-                when().
-                post("/employees/delete").
-                then().
-                assertThat().statusCode(200)).extract().response().asString();
-
-        assertEquals(resp, "Employee deleted");
+        assertEquals(delEmployee("name", "Mary Jones"), "Employee deleted");
     }
 
     //Add a new employee with the salary separated by a comma (sent as a String).
     //Comma will be removed and the employee will be added successfully.
     @Test (dependsOnMethods = "ping")
     public void numComma() {
+
+
         HashMap<String, Object> bod = new HashMap<>();
         bod.put("name", "Sue Jackson");
         bod.put("age", RandomUtils.nextInt(1, 100));
@@ -260,22 +191,6 @@ public class APITests {
                 assertThat().statusCode(400);
     }
 
-    //Data provider used in the 'checkEmployee' test
-    @DataProvider
-    public Object[][] getEmpl()
-    {
-        //Create test array data object
-        Object[][] data = new Object[2][2];
 
-        //Add data about initial 2 employees (Index & Name)
-        data[0][0] = "0";
-        data[0][1] = "Mary Jones";
-
-        //2nd row. Test using this data provider will run twice.
-        data[1][0] = "1";
-        data[1][1] = "John Smith";
-
-        return data;
-    }
 
 }
