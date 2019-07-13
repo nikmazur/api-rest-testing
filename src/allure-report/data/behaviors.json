@@ -1,0 +1,215 @@
+{
+  "statistic" : {
+    "failed" : 6,
+    "broken" : 0,
+    "skipped" : 0,
+    "passed" : 8,
+    "unknown" : 0,
+    "total" : 14
+  },
+  "time" : {
+    "minDuration" : 3,
+    "maxDuration" : 2031,
+    "sumDuration" : 2364,
+    "start" : 1563016468222,
+    "stop" : 1563016470700,
+    "duration" : 2478
+  },
+  "children" : [ {
+    "uid" : "11e07a7d87b533a",
+    "name" : "Default feature",
+    "time" : {
+      "minDuration" : 3,
+      "maxDuration" : 2031,
+      "sumDuration" : 2364,
+      "start" : 1563016468222,
+      "stop" : 1563016470700,
+      "duration" : 2478
+    },
+    "statistic" : {
+      "failed" : 6,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 8,
+      "unknown" : 0,
+      "total" : 14
+    },
+    "type" : "TestGroupNode",
+    "children" : [ {
+      "uid" : "d6a726859b3e9ad1",
+      "name" : "Default story",
+      "time" : {
+        "minDuration" : 3,
+        "maxDuration" : 2031,
+        "sumDuration" : 2364,
+        "start" : 1563016468222,
+        "stop" : 1563016470700,
+        "duration" : 2478
+      },
+      "statistic" : {
+        "failed" : 6,
+        "broken" : 0,
+        "skipped" : 0,
+        "passed" : 8,
+        "unknown" : 0,
+        "total" : 14
+      },
+      "type" : "TestGroupNode",
+      "children" : [ {
+        "uid" : "2c3deef3a2b42462",
+        "name" : "delEmployeeName",
+        "time" : {
+          "start" : 1563016470687,
+          "stop" : 1563016470700,
+          "duration" : 13
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "c31be9e6fdbe0746",
+        "name" : "checkEmployee",
+        "time" : {
+          "start" : 1563016470406,
+          "stop" : 1563016470423,
+          "duration" : 17
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "6f5a711058a96c52",
+        "name" : "addNewEmployee",
+        "time" : {
+          "start" : 1563016468290,
+          "stop" : 1563016470321,
+          "duration" : 2031
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "786b64685ffe5833",
+        "name" : "checkEmployee",
+        "time" : {
+          "start" : 1563016470332,
+          "stop" : 1563016470401,
+          "duration" : 69
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "1bb636e3d9287597",
+        "name" : "notEmpty",
+        "time" : {
+          "start" : 1563016470648,
+          "stop" : 1563016470663,
+          "duration" : 15
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "e0d808098e8cc624",
+        "name" : "negAddEmpl",
+        "time" : {
+          "start" : 1563016470450,
+          "stop" : 1563016470510,
+          "duration" : 60
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "e87009d3af0acd9b",
+        "name" : "ping",
+        "time" : {
+          "start" : 1563016468222,
+          "stop" : 1563016468225,
+          "duration" : 3
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "a1efcb41eebfef35",
+        "name" : "negDelWrongArg",
+        "time" : {
+          "start" : 1563016470569,
+          "stop" : 1563016470591,
+          "duration" : 22
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "bdf92d2692e5892",
+        "name" : "nameComma",
+        "time" : {
+          "start" : 1563016470426,
+          "stop" : 1563016470447,
+          "duration" : 21
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "d7d7f94514b5c262",
+        "name" : "delEmployeeIndex",
+        "time" : {
+          "start" : 1563016470666,
+          "stop" : 1563016470683,
+          "duration" : 17
+        },
+        "status" : "passed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "a5d5a586ad309c6e",
+        "name" : "negBadURL",
+        "time" : {
+          "start" : 1563016470513,
+          "stop" : 1563016470534,
+          "duration" : 21
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "72d6b9e35ee2c61b",
+        "name" : "negTextInput",
+        "time" : {
+          "start" : 1563016470595,
+          "stop" : 1563016470617,
+          "duration" : 22
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "97d8a8fed8378be3",
+        "name" : "negTextSpaces",
+        "time" : {
+          "start" : 1563016470620,
+          "stop" : 1563016470645,
+          "duration" : 25
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "ac4e5041096059af",
+        "name" : "negDelNoParams",
+        "time" : {
+          "start" : 1563016470537,
+          "stop" : 1563016470565,
+          "duration" : 28
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      } ]
+    } ]
+  } ]
+}

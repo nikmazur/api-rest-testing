@@ -29,8 +29,8 @@ public class Methods {
         return given().baseUri(RestAssured.baseURI).contentType(ContentType.JSON).accept(ContentType.JSON);
     }
 
-    public static int getStatus() {
-        return mainRequest().basePath("/ping").get().getStatusCode();
+    public static int getStatus(String path) {
+            return mainRequest().basePath(path).get().getStatusCode();
     }
 
     public static List<Employee> getEmployees() {

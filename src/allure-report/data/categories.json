@@ -1,0 +1,190 @@
+{
+  "statistic" : {
+    "failed" : 6,
+    "broken" : 0,
+    "skipped" : 0,
+    "passed" : 0,
+    "unknown" : 0,
+    "total" : 6
+  },
+  "time" : {
+    "minDuration" : 21,
+    "maxDuration" : 60,
+    "sumDuration" : 178,
+    "start" : 1563016470450,
+    "stop" : 1563016470645,
+    "duration" : 195
+  },
+  "children" : [ {
+    "uid" : "20a036709ea150ce",
+    "name" : "Product defects",
+    "time" : {
+      "minDuration" : 21,
+      "maxDuration" : 60,
+      "sumDuration" : 178,
+      "start" : 1563016470450,
+      "stop" : 1563016470645,
+      "duration" : 195
+    },
+    "statistic" : {
+      "failed" : 6,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 6
+    },
+    "type" : "TestGroupNode",
+    "children" : [ {
+      "uid" : "5eca65d852e071fe",
+      "name" : "1 expectation failed.\nExpected status code <200> but was <500>.\n",
+      "time" : {
+        "minDuration" : 60,
+        "maxDuration" : 60,
+        "sumDuration" : 60,
+        "start" : 1563016470450,
+        "stop" : 1563016470510,
+        "duration" : 60
+      },
+      "statistic" : {
+        "failed" : 1,
+        "broken" : 0,
+        "skipped" : 0,
+        "passed" : 0,
+        "unknown" : 0,
+        "total" : 1
+      },
+      "type" : "TestGroupNode",
+      "children" : [ {
+        "uid" : "e0d808098e8cc624",
+        "name" : "negAddEmpl",
+        "time" : {
+          "start" : 1563016470450,
+          "stop" : 1563016470510,
+          "duration" : 60
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      } ]
+    }, {
+      "uid" : "f4e9b7361e443cc6",
+      "name" : "expected [Employee deleted] but found [Employee not found]",
+      "time" : {
+        "minDuration" : 22,
+        "maxDuration" : 28,
+        "sumDuration" : 50,
+        "start" : 1563016470537,
+        "stop" : 1563016470591,
+        "duration" : 54
+      },
+      "statistic" : {
+        "failed" : 2,
+        "broken" : 0,
+        "skipped" : 0,
+        "passed" : 0,
+        "unknown" : 0,
+        "total" : 2
+      },
+      "type" : "TestGroupNode",
+      "children" : [ {
+        "uid" : "a1efcb41eebfef35",
+        "name" : "negDelWrongArg",
+        "time" : {
+          "start" : 1563016470569,
+          "stop" : 1563016470591,
+          "duration" : 22
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "ac4e5041096059af",
+        "name" : "negDelNoParams",
+        "time" : {
+          "start" : 1563016470537,
+          "stop" : 1563016470565,
+          "duration" : 28
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      } ]
+    }, {
+      "uid" : "9b91d0834ef0a6b9",
+      "name" : "expected [200] but found [404]",
+      "time" : {
+        "minDuration" : 21,
+        "maxDuration" : 21,
+        "sumDuration" : 21,
+        "start" : 1563016470513,
+        "stop" : 1563016470534,
+        "duration" : 21
+      },
+      "statistic" : {
+        "failed" : 1,
+        "broken" : 0,
+        "skipped" : 0,
+        "passed" : 0,
+        "unknown" : 0,
+        "total" : 1
+      },
+      "type" : "TestGroupNode",
+      "children" : [ {
+        "uid" : "a5d5a586ad309c6e",
+        "name" : "negBadURL",
+        "time" : {
+          "start" : 1563016470513,
+          "stop" : 1563016470534,
+          "duration" : 21
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      } ]
+    }, {
+      "uid" : "9efb9c858bd6e9d6",
+      "name" : "1 expectation failed.\nExpected status code <200> but was <400>.\n",
+      "time" : {
+        "minDuration" : 22,
+        "maxDuration" : 25,
+        "sumDuration" : 47,
+        "start" : 1563016470595,
+        "stop" : 1563016470645,
+        "duration" : 50
+      },
+      "statistic" : {
+        "failed" : 2,
+        "broken" : 0,
+        "skipped" : 0,
+        "passed" : 0,
+        "unknown" : 0,
+        "total" : 2
+      },
+      "type" : "TestGroupNode",
+      "children" : [ {
+        "uid" : "72d6b9e35ee2c61b",
+        "name" : "negTextInput",
+        "time" : {
+          "start" : 1563016470595,
+          "stop" : 1563016470617,
+          "duration" : 22
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      }, {
+        "uid" : "97d8a8fed8378be3",
+        "name" : "negTextSpaces",
+        "time" : {
+          "start" : 1563016470620,
+          "stop" : 1563016470645,
+          "duration" : 25
+        },
+        "status" : "failed",
+        "flaky" : false,
+        "type" : "TestCaseNode"
+      } ]
+    } ]
+  } ]
+}

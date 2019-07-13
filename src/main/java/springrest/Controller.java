@@ -32,18 +32,17 @@ public class Controller extends Data {
         try {
             age = Double.parseDouble(input.get("age"));
             //We also check and remove any commas from salary using the replace() method
-            ID = Integer.parseInt(input.get("id").replace(",", ""));
+            ID = Integer.parseInt(input.get("id"));
         } catch(NumberFormatException nfe) {
             throw new ResourceBadRequestException();
         }
 
-        String name = input.get("name");
+        String name = input.get("name").replace(",", "");
         String title = input.get("title");
 
         //Checking input data: name not null, empty, or only spaces (using trim()). Age & salary not 0.
         //Data is then passed to the method.
-        if(name != null && name.trim().length() > 0 && title != null && title.trim().length() > 0 &&
-                age != 0 && ID != 0)
+        if(name.trim().length() > 0 && title.trim().length() > 0 && age != 0 && ID != 0)
             Data.addEmpl(ID, name, title, age);
         else
             throw new ResourceBadRequestException();
