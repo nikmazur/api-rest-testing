@@ -1,4 +1,5 @@
 import com.github.javafaker.Faker;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -15,20 +16,22 @@ import static io.restassured.RestAssured.given;
 
 public class Methods {
 
-    public Faker faker;
+    public static Faker faker;
 
-    //This method launches the Spring REST server from main before running any tests
     @BeforeSuite
+    @Step("This method launches the Spring REST server from main before running any tests")
     public void launchServer() {
         Application.main(new String[]{""});
         faker = new Faker();
         RestAssured.baseURI = "http://localhost:8188";
     }
 
+    @Step("Main API Request Body")
     public static RequestSpecification mainRequest() {
         return given().baseUri(RestAssured.baseURI).contentType(ContentType.JSON).accept(ContentType.JSON);
     }
 
+    @Step("Getting server status")
     public static int getStatus(String path) {
             return mainRequest().basePath(path).get().getStatusCode();
     }

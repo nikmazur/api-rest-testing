@@ -82,9 +82,9 @@
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
                 <version>2.9</version>
-                <configuration>
-                    <reportDirectory>${project.basedir}/src/allure-report</reportDirectory>
-                </configuration>
+<!--                <configuration>-->
+<!--                    <reportDirectory>${project.basedir}/src/allure-report</reportDirectory>-->
+<!--                </configuration>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

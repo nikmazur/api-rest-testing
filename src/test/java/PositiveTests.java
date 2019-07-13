@@ -1,3 +1,4 @@
+import io.qameta.allure.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.Assert;
@@ -6,12 +7,14 @@ import springrest.Employee;
 
 import static org.testng.Assert.*;
 
-public class APITests extends Methods {
+@Epic("API Testing")
+@Feature("Testing a REST API server with Rest Assured")
+@Story("Positive Tests")
+public class PositiveTests extends Methods {
 
-    /* Smoke test for  server availability. Checks for the HTTP 200 status code.
-     * All subsequent tests are dependent on this one (dependsOnMethods argument).
+    /* All subsequent tests are dependent on this one (dependsOnMethods argument).
      * Will sometimes fail because of the random bool in Data. */
-    @Test
+    @Test(description = "Smoke test for  server availability. Checks for the HTTP 200 status code.")
     public void ping() {
         try {
             //Form HTTP request, check response status code. Comment this to disable random failing.
@@ -23,14 +26,13 @@ public class APITests extends Methods {
         }
     }
 
-    //Verify that the starting Employees set is not empty.
-    @Test (dependsOnMethods = "ping")
+    @Test (description =  "Verify that the starting Employees set is not empty", dependsOnMethods = "ping")
     public void notEmpty() {
         assertFalse(getEmployees().isEmpty());
     }
 
     //Check the contents of JSON for specific data (in this case the name of employee by their index).
-    //This test uses a data provider 'getEmpl' (listed at end of the class) and will run 2 times.
+    //This test uses a data provider 'getEmpl' (listed in Methods) and will run multiple times.
     @Test (dataProvider = "getEmpl", dependsOnMethods = "ping")
     public void checkEmployee(final int ID, final String NAME) {
 
@@ -74,53 +76,5 @@ public class APITests extends Methods {
                 .filter(x -> x.getName().equals(commaName.replace(",", "")))
                 .count(), (long) 0);
     }
-
-    //Negative tests.
-    //Try to access a bad URL (part of which is randomly generated).
-    @Test (dependsOnMethods = "ping")
-    public void negBadURL() {
-        assertEquals(Methods.getStatus("/" + RandomStringUtils.randomAlphabetic(5)), 200);
-    }
-
-    //Try to access delete method without any parameters. Expecting "Not found" message in return.
-    @Test (dependsOnMethods = "ping")
-    public void negDelNoParams() {
-        assertEquals(delEmployee("", null), "Employee deleted");
-    }
-
-    //Try to pass wrong parameters - index instead of name. Expecting "Not found" in return.
-    @Test (dependsOnMethods = "ping")
-    public void negDelWrongArg() {
-        assertEquals(delEmployee("name", "0"), "Employee deleted");
-    }
-
-    /* Bad input. Adding an employee without a required field (name is missing).
-     * In this test we're also expecting an exception by param 'expectedExceptions'
-     * (Request will return status code 400 instead of 200, which will trigger an Assertion exception).*/
-    @Test (dependsOnMethods = "ping")
-    public void negAddEmpl() {
-        Employee newEmpl = new Employee
-                (RandomUtils.nextInt(0, 10000), null, faker.company().profession(), RandomUtils.nextInt(18, 100));
-        addEmployee(newEmpl);
-    }
-
-    //Bad input. Field salary contains letters instead of numbers.
-    @Test (dependsOnMethods = "ping")
-    public void negTextInput() {
-        faker.number().numberBetween(18, 100);
-        Employee newEmpl = new Employee
-                (0, faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 100));
-        addEmployee(newEmpl);
-    }
-
-    //Bad input. Name does not contain any letters, only spaces.
-    @Test (dependsOnMethods = "ping")
-    public void negTextSpaces() {
-        Employee newEmpl = new Employee
-                (RandomUtils.nextInt(0, 10000), "   ", faker.company().profession(), RandomUtils.nextInt(18, 100));
-        addEmployee(newEmpl);
-    }
-
-
 
 }
