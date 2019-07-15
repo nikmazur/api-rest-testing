@@ -46,8 +46,7 @@ public class Controller extends Data {
         if(isNumeric(name) || isNumeric(title))
             throw new ResourceBadRequestException();
 
-        //Checking input data: name not null, empty, or only spaces (using trim()). Age & salary not 0.
-        //Data is then passed to the method.
+        //Checking input data: name not empty or only spaces (using trim()). Age & salary not 0.
         if(name.trim().length() > 0 && title.trim().length() > 0 && age != 0 && ID != 0)
             Data.addEmpl(ID, name, title, age);
         else
@@ -71,11 +70,8 @@ public class Controller extends Data {
             else
                 return "Employee not found";
         }
-        else if(name != null && name.length() > 0) {
-            if(delEmplName(name))
+        else if(name != null && delEmplName(name)) {
                 return "Employee deleted";
-            else
-                return "Employee not found";
         }
         else
             return "Employee not found";

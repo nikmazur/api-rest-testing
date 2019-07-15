@@ -11,9 +11,7 @@ import org.testng.annotations.DataProvider;
 import springrest.Application;
 import springrest.Employee;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -45,7 +43,8 @@ public class Methods {
             emplProp.setProperty("Title", faker.company().profession());
             emplProp.setProperty("Age", String.valueOf(RandomUtils.nextInt(18, 100)));
 
-            Writer writer = Files.newBufferedWriter(Paths.get("Empl" + i + ".properties"));
+            File file = new File("randomEmployees/Empl" + i + ".properties");
+            FileWriter writer = new FileWriter(file);
             emplProp.store(writer,"Employee Data");
             writer.close();
         }
@@ -89,7 +88,7 @@ public class Methods {
         for(int i = 1; i < 4; ++i) {
             Properties prop = new Properties();
             try {
-                Reader propReader = Files.newBufferedReader(Paths.get("Empl" + i + ".properties"));
+                Reader propReader = Files.newBufferedReader(Paths.get("randomEmployees/Empl" + i + ".properties"));
                 prop.load(propReader);
             } catch (IOException ioe) {
                 ioe.printStackTrace();

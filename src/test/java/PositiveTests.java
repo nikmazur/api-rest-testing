@@ -61,7 +61,7 @@ public class PositiveTests extends Methods {
     //Try to remove an employee by their name
     @Test (description =  "Remove employee by Name", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
-        assertEquals(delEmployee("name", "Mary Jones"), "Employee deleted");
+        assertEquals(delEmployee("name", getEmpl()[1][1]), "Employee deleted");
     }
 
 

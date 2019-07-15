@@ -21,14 +21,14 @@ public class Data {
         return comp;
     }
 
-    //Constructor: 1. Sets bool to random value 2. Populates HashMap with initial Employees data
+    //Constructor: 1. Sets bool to random value 2. Populates ArrayList with initial Employees data
     public Data() {
         PING_RAND = RandomUtils.nextBoolean();
 
         for(int i = 1; i < 4; ++i) {
             Properties prop = new Properties();
             try {
-                Reader propReader = Files.newBufferedReader(Paths.get("Empl" + i + ".properties"));
+                Reader propReader = Files.newBufferedReader(Paths.get("randomEmployees/Empl" + i + ".properties"));
                 prop.load(propReader);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
