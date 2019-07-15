@@ -36,7 +36,7 @@ public class PositiveTests extends Methods {
     @Test (description =  "Check employee", dataProvider = "getEmpl")
     @Description("Check the contents of JSON for specific data (name & index of an employee).")
     //This test uses a data provider 'getEmpl' (listed in Methods) and will run multiple times.
-    public void checkEmployee(final int ID, final String NAME) {
+    public void checkEmployee(int ID, String NAME) {
         assertNotEquals(getEmployees().stream()
                 .filter(x -> x.getId() == ID && x.getName().equals(NAME))
                 .count(), (long) 0);

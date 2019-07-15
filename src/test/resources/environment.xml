@@ -1,0 +1,10 @@
+<environment>
+    <parameter>
+        <key>OS</key>
+        <value>Windows 10</value>
+    </parameter>
+    <parameter>
+        <key>Srping Boot</key>
+        <value>2.1.6</value>
+    </parameter>
+</environment>

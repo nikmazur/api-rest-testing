@@ -4,13 +4,21 @@ import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import org.apache.commons.lang3.RandomUtils;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import springrest.Application;
 import springrest.Employee;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 
@@ -19,11 +27,28 @@ public class Methods {
     public static Faker faker;
 
     @BeforeSuite
-    @Step("Launch the Spring REST server from main")
+    @Step("Launch the Spring REST server")
     public void launchServer() {
         Application.main(new String[]{""});
         faker = new Faker();
         RestAssured.baseURI = "http://localhost:8188";
+    }
+
+    @AfterSuite
+    @Step("Generate new Employees for the next run")
+    public void generateEmployees() throws IOException {
+
+        for(int i = 1; i < 4; ++i) {
+            Properties emplProp = new Properties();
+            emplProp.setProperty("ID", String.valueOf(RandomUtils.nextInt(1, 10000)));
+            emplProp.setProperty("Name", faker.name().fullName());
+            emplProp.setProperty("Title", faker.company().profession());
+            emplProp.setProperty("Age", String.valueOf(RandomUtils.nextInt(18, 100)));
+
+            Writer writer = Files.newBufferedWriter(Paths.get("Empl" + i + ".properties"));
+            emplProp.store(writer,"Employee Data");
+            writer.close();
+        }
     }
 
     public static RequestSpecification mainRequest() {
@@ -59,16 +84,20 @@ public class Methods {
     @DataProvider
     public Object[][] getEmpl()
     {
-        //Create test array data object
-        Object[][] data = new Object[2][2];
+        Object[][] data = new Object[3][2];
 
-        //Add data about initial 2 employees (Index & Name)
-        data[0][0] = 79400;
-        data[0][1] = "Mary Jones";
+        for(int i = 1; i < 4; ++i) {
+            Properties prop = new Properties();
+            try {
+                Reader propReader = Files.newBufferedReader(Paths.get("Empl" + i + ".properties"));
+                prop.load(propReader);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
 
-        //2nd row. Test using this data provider will run twice.
-        data[1][0] = 32847;
-        data[1][1] = "John Smith";
+            data[i-1][0] = Integer.parseInt(prop.getProperty("ID"));
+            data[i-1][1] = prop.getProperty("Name");
+        }
 
         return data;
     }

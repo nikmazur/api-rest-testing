@@ -1,16 +1,19 @@
 package springrest;
 
-import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.RandomUtils;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Properties;
 
 
 public class Data {
 
     //Bool for random ping results.
     public final boolean PING_RAND;
-    private static TestData data;
 
     //HashMap for storing data about our Employees + getter
     private static ArrayList<Employee> comp = new ArrayList<>();
@@ -22,9 +25,21 @@ public class Data {
     public Data() {
         PING_RAND = RandomUtils.nextBoolean();
 
-        data = ConfigFactory.create(TestData.class);
-        comp.add(0, new Employee(data.emp1ID(), data.emp1Name(), data.emp1Title(), data.emp1Age()));
-        comp.add(1, new Employee(data.emp2ID(), data.emp2Name(), data.emp2Title(), data.emp2Age()));
+        for(int i = 1; i < 4; ++i) {
+            Properties prop = new Properties();
+            try {
+                Reader propReader = Files.newBufferedReader(Paths.get("Empl" + i + ".properties"));
+                prop.load(propReader);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+
+            comp.add(new Employee(
+                    Integer.parseInt(prop.getProperty("ID")),
+                    prop.getProperty("Name"),
+                    prop.getProperty("Title"),
+                    Double.parseDouble(prop.getProperty("Age"))));
+        }
     }
 
     //Method for adding new employees to the map.

@@ -52,12 +52,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.aeonbits.owner</groupId>
-            <artifactId>owner</artifactId>
-            <version>1.0.10</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
             <version>0.18</version>
@@ -68,7 +62,6 @@
             <artifactId>allure-testng</artifactId>
             <version>2.12.1</version>
         </dependency>
-
 
     </dependencies>
 
@@ -108,6 +101,35 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/allure-results</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources</directory>
+                                    <includes>
+                                        <include>environment.xml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${basedir}/target/site/allure-maven-plugin</directory>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${basedir}/target/allure-results</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -137,5 +159,4 @@
             </plugin>
         </plugins>
     </reporting>
-
 </project>
