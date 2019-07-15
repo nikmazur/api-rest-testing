@@ -1,8 +1,8 @@
 import com.github.javafaker.Faker;
+import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
@@ -19,32 +19,37 @@ public class Methods {
     public static Faker faker;
 
     @BeforeSuite
-    @Step("This method launches the Spring REST server from main before running any tests")
+    @Step("Launch the Spring REST server from main")
     public void launchServer() {
         Application.main(new String[]{""});
         faker = new Faker();
         RestAssured.baseURI = "http://localhost:8188";
     }
 
-    @Step("Main API Request Body")
     public static RequestSpecification mainRequest() {
         return given().baseUri(RestAssured.baseURI).contentType(ContentType.JSON).accept(ContentType.JSON);
     }
 
-    @Step("Getting server status")
+    @Step("Get server status")
     public static int getStatus(String path) {
             return mainRequest().basePath(path).get().getStatusCode();
     }
 
+    @Attachment
+    @Step("Retrieve all employees, return as List")
     public static List<Employee> getEmployees() {
         return Arrays.asList(mainRequest().basePath("/employees").get().then().assertThat().statusCode(200).extract().as(Employee[].class));
     }
 
+    @Attachment
+    @Step("Add new employee, return new list of employees")
     public static List<Employee> addEmployee(Employee empl) {
         return Arrays.asList(mainRequest().basePath("/employees/add").body(empl).post()
                 .then().assertThat().statusCode(200).extract().as(Employee[].class));
     }
 
+    @Attachment
+    @Step("Request to delete an employee (by Name or Index)")
     public static String delEmployee(String type, Object id) {
         return mainRequest().basePath("/employees/delete").queryParam(type, id).post()
                 .then().assertThat().statusCode(200).extract().asString();

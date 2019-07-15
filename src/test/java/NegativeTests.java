@@ -1,4 +1,7 @@
-import io.qameta.allure.*;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.annotations.Test;
@@ -11,48 +14,42 @@ import static org.testng.Assert.assertEquals;
 @Story("Negative Tests")
 public class NegativeTests extends Methods {
 
-    //Try to access a bad URL (part of which is randomly generated).
-    @Test()
+    @Test (description =  "Bad URL")
+    @Description("Access a bad URL (part of which is randomly generated).")
     public void negBadURL() {
         assertEquals(Methods.getStatus("/" + RandomStringUtils.randomAlphabetic(5)), 200);
     }
 
-    //Try to access delete method without any parameters. Expecting "Not found" message in return.
-    @Test ()
+    @Test (description =  "Delete w/o params")
+    @Description("Access delete method without any parameters. Should return 'Not found'")
     public void negDelNoParams() {
         assertEquals(delEmployee("", null), "Employee deleted");
     }
 
-    //Try to pass wrong parameters - index instead of name. Expecting "Not found" in return.
-    @Test ()
+    @Test (description =  "Delete w/ wrong params")
+    @Description("Pass wrong parameters - index instead of name. Should return 'Not found'")
     public void negDelWrongArg() {
         assertEquals(delEmployee("name", "0"), "Employee deleted");
     }
 
-    /* Bad input. Adding an employee without a required field (name is missing).
-     * In this test we're also expecting an exception by param 'expectedExceptions'
-     * (Request will return status code 400 instead of 200, which will trigger an Assertion exception).*/
-    @Test ()
+    @Test (description =  "Bad input: null name")
+    @Description("Add an employee without a required field (name is missing).")
     public void negAddEmpl() {
-        Employee newEmpl = new Employee
-                (RandomUtils.nextInt(0, 10000), null, faker.company().profession(), RandomUtils.nextInt(18, 100));
-        addEmployee(newEmpl);
+        addEmployee(new Employee
+                (RandomUtils.nextInt(1, 10000), null, faker.company().profession(), RandomUtils.nextInt(18, 100)));
     }
 
-    //Bad input. Field salary contains letters instead of numbers.
-    @Test ()
+    @Test (description =  "Bad input: numbers in text")
+    @Description("Add an employee, title has number instead of letters.")
     public void negTextInput() {
-        faker.number().numberBetween(18, 100);
-        Employee newEmpl = new Employee
-                (0, faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 100));
-        addEmployee(newEmpl);
+        addEmployee(new Employee
+                (RandomUtils.nextInt(1, 10000), faker.name().fullName(), faker.number().digits(3), RandomUtils.nextInt(18, 100)));
     }
 
-    //Bad input. Name does not contain any letters, only spaces.
-    @Test ()
+    @Test (description =  "Bad input: blank name")
+    @Description("Add an employee, name does not contain any letters, only spaces.")
     public void negTextSpaces() {
-        Employee newEmpl = new Employee
-                (RandomUtils.nextInt(0, 10000), "   ", faker.company().profession(), RandomUtils.nextInt(18, 100));
-        addEmployee(newEmpl);
+        addEmployee(new Employee
+                (RandomUtils.nextInt(1, 10000), "   ", faker.company().profession(), RandomUtils.nextInt(18, 100)));
     }
 }

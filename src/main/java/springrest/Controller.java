@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static org.apache.commons.lang3.StringUtils.isNumeric;
+
 @RestController
 public class Controller extends Data {
 
@@ -39,6 +41,10 @@ public class Controller extends Data {
 
         String name = input.get("name").replace(",", "");
         String title = input.get("title");
+
+        //Check if name or title contains only numbers
+        if(isNumeric(name) || isNumeric(title))
+            throw new ResourceBadRequestException();
 
         //Checking input data: name not null, empty, or only spaces (using trim()). Age & salary not 0.
         //Data is then passed to the method.
