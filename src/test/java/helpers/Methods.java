@@ -28,10 +28,14 @@ public class Methods {
 
     @BeforeSuite
     @Step("Launch the Spring REST server")
-    public void launchServer() {
+    public void launchServer() throws IOException {
         Application.main(new String[]{""});
         faker = new Faker();
-        RestAssured.baseURI = "http://localhost:8188";
+
+        Properties prop = new Properties();
+        Reader propReader = Files.newBufferedReader(Paths.get("src/main/resources/application.properties"));
+        prop.load(propReader);
+        RestAssured.baseURI = "http://" + prop.getProperty("address") + ":" + prop.getProperty("server.port");
     }
 
     @AfterSuite

@@ -10,13 +10,13 @@ import java.util.Properties;
 
 public class Data {
 
-    //HashMap for storing data about our Employees + getter
+    //ArrayList for storing data about our Employees + getter
     private static ArrayList<Employee> comp = new ArrayList<>();
     public static ArrayList<Employee> getComp() {
         return comp;
     }
 
-    //Constructor: 1. Sets bool to random value 2. Populates ArrayList with initial Employees data
+    //Constructor populates ArrayList with initial Employees data
     public Data() {
         for(int i = 1; i < 4; ++i) {
             Properties prop = new Properties();
@@ -35,12 +35,10 @@ public class Data {
         }
     }
 
-    //Method for adding new employees to the map.
     public static void addEmpl(int ID, String name, String title, int age) {
         comp.add(new Employee(ID, name, title, age));
     }
 
-    //Delete the employee by index number.
     public void delEmpl(int index) {
         comp.remove(index);
     }

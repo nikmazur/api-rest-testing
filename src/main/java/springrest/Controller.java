@@ -34,12 +34,12 @@ public class Controller extends Data {
         int ID;
         try {
             age = Integer.parseInt(input.get("age"));
-            //We also check and remove any commas from salary using the replace() method
             ID = Integer.parseInt(input.get("id"));
         } catch(NumberFormatException nfe) {
             throw new ResourceBadRequestException();
         }
 
+        //Check and remove any commas from name using the replace() method
         String name = input.get("name").replace(",", "");
         String title = input.get("title");
 
@@ -56,8 +56,8 @@ public class Controller extends Data {
         return Data.getComp();
     }
 
-    /* Handles requests for deleting employees. Result is returned in the form of a string.
-     * Has two parameters - index & name, both optional. If neither provided, returns "Not found" message. */
+    /* Handles requests for deleting employees. Result is returned as text.
+     * Has two parameters - index & name, both optional. If neither provided, returns "Not found". */
     @RequestMapping(value = "/employees/delete", method = RequestMethod.POST)
     public String delEmplIndex
             (@RequestParam(required = false, value = "ind") Integer index,

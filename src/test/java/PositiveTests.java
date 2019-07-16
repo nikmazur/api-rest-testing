@@ -12,7 +12,7 @@ import static org.testng.Assert.*;
 @Story("Positive Tests")
 public class PositiveTests extends Methods {
 
-    @Test(description = "Smoke availability")
+    @Test(description = "Smoke availability", priority = 1)
     @Severity(value = SeverityLevel.CRITICAL)
     @Description("Checks for the HTTP 200 status code. Will fail randomly.")
     @Flaky
@@ -34,9 +34,9 @@ public class PositiveTests extends Methods {
     }
 
 
+    //This test uses a data provider 'getEmpl' (listed in helpers.Methods) and will run multiple times.
     @Test (description =  "Check employee", dataProvider = "getEmpl")
     @Description("Check the contents of JSON for specific data (name & index of an employee).")
-    //This test uses a data provider 'getEmpl' (listed in helpers.Methods) and will run multiple times.
     public void checkEmployee(int ID, String NAME) {
         assertNotEquals(getEmployees().stream()
                 .filter(x -> x.getId() == ID && x.getName().equals(NAME))
@@ -50,7 +50,6 @@ public class PositiveTests extends Methods {
                 (RandomUtils.nextInt(1, 10000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 80));
         assert(addEmployee(newEmpl).stream().anyMatch(x -> x.equals(newEmpl)));
     }
-
 
     /* This and the next test are set to run only after the other tests which are dependent on content
      * have been passed, so as not to interfere with them and cause a false fail. */
@@ -67,7 +66,7 @@ public class PositiveTests extends Methods {
 
 
     @Test (description =  "Comma in Name")
-    @Description("Add a new employee with the Name separated by a comma (sent as a String). " +
+    @Description("Add a new employee with the Name separated by a comma. " +
             "Comma will be removed and the employee will be added successfully.")
     public void nameComma() {
         String commaName = faker.name().firstName() + ", " + faker.name().lastName();

@@ -1,10 +1,14 @@
 <environment>
     <parameter>
-        <key>OS</key>
-        <value>Windows 10</value>
+        <key>Jenkins</key>
+        <value>2.176.1</value>
     </parameter>
     <parameter>
-        <key>Srping Boot</key>
+        <key>Spring Boot</key>
         <value>2.1.6</value>
+    </parameter>
+    <parameter>
+        <key>Allure</key>
+        <value>2.12.1</value>
     </parameter>
 </environment>
