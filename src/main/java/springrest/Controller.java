@@ -1,5 +1,6 @@
 package springrest;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class Controller extends Data {
     //For ping requests. Randomly returns 404 error.
     @RequestMapping("/ping")
     public void ping() {
-        if(PING_RAND)
+        if(RandomUtils.nextBoolean())
             throw new ResourceNotFoundException();
     }
 
@@ -29,10 +30,10 @@ public class Controller extends Data {
     public ArrayList<Employee> addEmpl(@RequestBody HashMap<String, String> input) {
         /* Check whether only numbers are passed in the numeric fields age & salary.
          * This is done by trying to convert them to double. In case of an exception error 405 is returned. */
-        double age;
+        int age;
         int ID;
         try {
-            age = Double.parseDouble(input.get("age"));
+            age = Integer.parseInt(input.get("age"));
             //We also check and remove any commas from salary using the replace() method
             ID = Integer.parseInt(input.get("id"));
         } catch(NumberFormatException nfe) {
@@ -62,13 +63,9 @@ public class Controller extends Data {
             (@RequestParam(required = false, value = "ind") Integer index,
              @RequestParam(required = false, value = "name") String name) {
 
-        if(index != null) {
-            if(getComp().get(index) != null) {
+        if(index != null && getComp().get(index) != null) {
                 delEmpl(index);
                 return "Employee deleted";
-            }
-            else
-                return "Employee not found";
         }
         else if(name != null && delEmplName(name)) {
                 return "Employee deleted";

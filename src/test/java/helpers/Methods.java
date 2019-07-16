@@ -1,3 +1,5 @@
+package helpers;
+
 import com.github.javafaker.Faker;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
@@ -41,7 +43,7 @@ public class Methods {
             emplProp.setProperty("ID", String.valueOf(RandomUtils.nextInt(1, 10000)));
             emplProp.setProperty("Name", faker.name().fullName());
             emplProp.setProperty("Title", faker.company().profession());
-            emplProp.setProperty("Age", String.valueOf(RandomUtils.nextInt(18, 100)));
+            emplProp.setProperty("Age", String.valueOf(RandomUtils.nextInt(18, 80)));
 
             File file = new File("randomEmployees/Empl" + i + ".properties");
             FileWriter writer = new FileWriter(file);

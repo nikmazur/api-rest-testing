@@ -5,9 +5,9 @@ public class Employee {
     private int id;
     private String name;
     private String title;
-    private double age;
+    private int age;
 
-    public Employee(int id, String name, String title, double age) {
+    public Employee(int id, String name, String title, int age) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -26,7 +26,7 @@ public class Employee {
         return title;
     }
 
-    public double getAge() {
+    public int getAge() {
         return age;
     }
 

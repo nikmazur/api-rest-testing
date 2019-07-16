@@ -1,3 +1,4 @@
+import helpers.Methods;
 import io.qameta.allure.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.Assert;
@@ -18,7 +19,7 @@ public class PositiveTests extends Methods {
     public void ping() {
         try {
             //Comment this to disable random failing.
-            assertEquals(Methods.getStatus("/ping"), 200);
+            assertEquals(getStatus("/ping"), 200);
         }
         catch(AssertionError ae) {
             //Example of a custom message upon test failure using try-catch blocks
@@ -35,7 +36,7 @@ public class PositiveTests extends Methods {
 
     @Test (description =  "Check employee", dataProvider = "getEmpl")
     @Description("Check the contents of JSON for specific data (name & index of an employee).")
-    //This test uses a data provider 'getEmpl' (listed in Methods) and will run multiple times.
+    //This test uses a data provider 'getEmpl' (listed in helpers.Methods) and will run multiple times.
     public void checkEmployee(int ID, String NAME) {
         assertNotEquals(getEmployees().stream()
                 .filter(x -> x.getId() == ID && x.getName().equals(NAME))
@@ -46,7 +47,7 @@ public class PositiveTests extends Methods {
     @Description("Check the functionality of adding a new employee.")
     public void addNewEmployee() {
         Employee newEmpl = new Employee
-                (RandomUtils.nextInt(1, 10000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 100));
+                (RandomUtils.nextInt(1, 10000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 80));
         assert(addEmployee(newEmpl).stream().anyMatch(x -> x.equals(newEmpl)));
     }
 
@@ -61,7 +62,7 @@ public class PositiveTests extends Methods {
     //Try to remove an employee by their name
     @Test (description =  "Remove employee by Name", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
-        assertEquals(delEmployee("name", getEmpl()[1][1]), "Employee deleted");
+        assertEquals(delEmployee("name", getEmpl()[0][1]), "Employee deleted");
     }
 
 
@@ -72,7 +73,7 @@ public class PositiveTests extends Methods {
         String commaName = faker.name().firstName() + ", " + faker.name().lastName();
 
         Employee newEmpl = new Employee
-                (RandomUtils.nextInt(1, 10000), commaName, faker.company().profession(), RandomUtils.nextInt(18, 100));
+                (RandomUtils.nextInt(1, 10000), commaName, faker.company().profession(), RandomUtils.nextInt(18, 80));
 
         assertNotEquals(addEmployee(newEmpl).stream()
                 .filter(x -> x.getName().equals(commaName.replace(",", "")))
