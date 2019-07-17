@@ -2,11 +2,9 @@ package helpers;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.Allure;
-import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.annotations.AfterSuite;
@@ -16,7 +14,10 @@ import org.testng.annotations.Listeners;
 import springrest.Application;
 import springrest.Employee;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;

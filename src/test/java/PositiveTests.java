@@ -10,6 +10,7 @@ import static org.testng.Assert.*;
 @Epic("API Testing")
 @Feature("Testing a REST API server with Rest Assured")
 @Story("Positive Tests")
+@Owner("Mazur N.")
 public class PositiveTests extends Methods {
 
     @Test(description = "Smoke availability", priority = 1)

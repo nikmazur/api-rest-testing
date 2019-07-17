@@ -43,12 +43,12 @@ public class LogListener implements ITestListener {
         logResponse(response);
     }
 
-    @Attachment(value = "Request")
+    @Attachment(value = "Request", type = "application/json")
     private byte[] logRequest(ByteArrayOutputStream stream) {
         return attach(stream);
     }
 
-    @Attachment(value = "Response")
+    @Attachment(value = "Response", type = "application/json")
     private byte[] logResponse(ByteArrayOutputStream stream) {
         return attach(stream);
     }

@@ -10,6 +10,7 @@ import static org.testng.Assert.assertEquals;
 @Epic("API Testing")
 @Feature("Testing a REST API server with Rest Assured")
 @Story("Negative Tests")
+@Owner("Mazur N.")
 public class NegativeTests extends Methods {
 
     @Test (description =  "Bad URL")
