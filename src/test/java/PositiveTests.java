@@ -46,8 +46,7 @@ public class PositiveTests extends Methods {
     @Test (description =  "Add new employee")
     @Description("Check the functionality of adding a new employee.")
     public void addNewEmployee() {
-        Employee newEmpl = new Employee
-                (RandomUtils.nextInt(1, 10000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 80));
+        Employee newEmpl = genNewEmpl();
         assert(addEmployee(newEmpl).stream().anyMatch(x -> x.equals(newEmpl)));
     }
 
@@ -58,12 +57,10 @@ public class PositiveTests extends Methods {
         assertEquals(delEmployee("ind", 1), "Employee deleted");
     }
 
-    //Try to remove an employee by their name
     @Test (description =  "Remove employee by Name", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
         assertEquals(delEmployee("name", getEmpl()[0][1]), "Employee deleted");
     }
-
 
     @Test (description =  "Comma in Name")
     @Description("Add a new employee with the Name separated by a comma. " +

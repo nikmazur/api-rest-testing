@@ -34,20 +34,20 @@ public class NegativeTests extends Methods {
     @Description("Add an employee without a required field (name is missing).")
     public void negAddEmpl() {
         addEmployee(new Employee
-                (RandomUtils.nextInt(1, 10000), null, faker.company().profession(), RandomUtils.nextInt(18, 100)));
+                (RandomUtils.nextInt(1000, 10000), null, faker.company().profession(), RandomUtils.nextInt(18, 80)));
     }
 
     @Test (description =  "Bad input: numbers in text")
     @Description("Add an employee, title has number instead of letters.")
     public void negTextInput() {
         addEmployee(new Employee
-                (RandomUtils.nextInt(1, 10000), faker.name().fullName(), faker.number().digits(3), RandomUtils.nextInt(18, 100)));
+                (RandomUtils.nextInt(1000, 10000), faker.name().fullName(), RandomStringUtils.randomNumeric(3), RandomUtils.nextInt(18, 80)));
     }
 
     @Test (description =  "Bad input: blank name")
     @Description("Add an employee, name does not contain any letters, only spaces.")
     public void negTextSpaces() {
         addEmployee(new Employee
-                (RandomUtils.nextInt(1, 10000), "   ", faker.company().profession(), RandomUtils.nextInt(18, 100)));
+                (RandomUtils.nextInt(1000, 10000), "   ", faker.company().profession(), RandomUtils.nextInt(18, 80)));
     }
 }
