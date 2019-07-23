@@ -43,6 +43,7 @@ public class Methods {
         Properties prop = new Properties();
         Reader propReader = Files.newBufferedReader(Paths.get("src/main/resources/application.properties"));
         prop.load(propReader);
+        //Get server address from application properties
         RestAssured.baseURI = "http://" + prop.getProperty("address") + ":" + prop.getProperty("server.port");
     }
 
@@ -50,6 +51,7 @@ public class Methods {
     @Step("Generate new Employees for the next run")
     public void generateEmployees() throws IOException {
 
+        //Writes random employee data to local prop files (will be used in the next run)
         for(int i = 1; i < 4; ++i) {
             Employee empl = genNewEmpl();
             Properties emplProp = new Properties();
@@ -101,6 +103,7 @@ public class Methods {
         return empl;
     }
 
+    //Separate method for assertions, needed to attach as step to report
     @Step("Verify that {0}")
     public void verify(String check, Object o1, Object o2, boolean equals) {
         if(equals)
@@ -115,6 +118,7 @@ public class Methods {
     {
         Object[][] data = new Object[3][2];
 
+        //Read employee data from local files
         for(int i = 1; i < 4; ++i) {
             Properties prop = new Properties();
             try {

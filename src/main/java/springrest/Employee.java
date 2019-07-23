@@ -36,6 +36,7 @@ public class Employee {
         return "Employee: id=" + id + ", name=" + name +", title=" + title + ", age=" + age;
     }
 
+    //Equals method for comparing class objects
     public boolean equals(Object o) {
 
         if (o == this) return true;
@@ -45,7 +46,7 @@ public class Employee {
 
         Employee empl = (Employee) o;
 
-        //Returns true if all 3 strings in both objects are equal, false otherwise
+        //Returns true if all params in both objects are equal, false otherwise
         return empl.id == (id) &&
                 empl.name.equals(name) &&
                 empl.title.equals(title) &&

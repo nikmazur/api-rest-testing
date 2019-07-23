@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 //http://automation-remarks.com/2017/rest-assured-allure-log/index.html
+// This listener is used for logging API requests & responses to Allure report
 
 public class LogListener implements ITestListener {
     private ByteArrayOutputStream request = new ByteArrayOutputStream();

@@ -1,3 +1,4 @@
+<!--Environment variables which are attached to the report-->
 <environment>
     <parameter>
         <key>Jenkins</key>
