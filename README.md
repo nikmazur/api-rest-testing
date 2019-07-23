@@ -7,7 +7,7 @@ mvn clean test allure:serve
 ```
 This will start an Apache Tomcat web server on localhost port 8188, and all tests will be executed against it. Upon completion an Allure report will be generated & opened in the default browser. 
 
-## [Download sample report](https://github.com/nikmazur/REST-API-Testing/blob/master/allure-report.zip)
+## [Download sample report](https://github.com/nikmazur/REST-API-Testing/raw/master/allure-report.zip)
 Screenshot:
 ![alt text](https://github.com/nikmazur/REST-API-Testing/blob/master/allure_screen.png "Allure Report")
 
