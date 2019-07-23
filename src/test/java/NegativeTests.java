@@ -5,8 +5,6 @@ import org.apache.commons.lang3.RandomUtils;
 import org.testng.annotations.Test;
 import springrest.Employee;
 
-import static org.testng.Assert.assertEquals;
-
 @Epic("API Testing")
 @Feature("Testing a REST API server with Rest Assured")
 @Story("Negative Tests")
@@ -16,19 +14,22 @@ public class NegativeTests extends Methods {
     @Test (description =  "Bad URL")
     @Description("Access a bad URL (part of which is randomly generated).")
     public void negBadURL() {
-        assertEquals(Methods.getStatus("/" + RandomStringUtils.randomAlphabetic(5)), 200);
+        verify("status code 200 is returned",
+                getStatus("/" + RandomStringUtils.randomAlphabetic(5)), 200, true);
     }
 
     @Test (description =  "Delete w/o params")
     @Description("Access delete method without any parameters. Should return 'Not found'")
     public void negDelNoParams() {
-        assertEquals(delEmployee("", null), "Employee deleted");
+        verify("deletion is confirmed",
+                delEmployee("", null), "Employee deleted", true);
     }
 
     @Test (description =  "Delete w/ wrong params")
     @Description("Pass wrong parameters - index instead of name. Should return 'Not found'")
     public void negDelWrongArg() {
-        assertEquals(delEmployee("name", "0"), "Employee deleted");
+        verify("deletion is confirmed",
+                delEmployee("name", "0"), "Employee deleted", true);
     }
 
     @Test (description =  "Bad input: null name")

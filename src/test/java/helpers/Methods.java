@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 
 //Listener for attaching request & response logs to Allure
 @Listeners(LogListener.class)
@@ -64,14 +66,6 @@ public class Methods {
         }
     }
 
-    @Step("Generate new Employee with random data")
-    public Employee genNewEmpl() {
-        Employee empl = new Employee
-                (RandomUtils.nextInt(1000, 10000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 80));
-        Allure.addAttachment("New Employee Data", empl.toString());
-        return empl;
-    }
-
     public static RequestSpecification mainRequest() {
         return given().baseUri(RestAssured.baseURI).contentType(ContentType.JSON).accept(ContentType.JSON);
     }
@@ -81,9 +75,10 @@ public class Methods {
         return mainRequest().basePath(path).get().getStatusCode();
     }
 
-    @Step("Retrieve all employees, return as List")
+    @Step("Retrieve all employees, return as list")
     public static List<Employee> getEmployees() {
-        return Arrays.asList(mainRequest().basePath("/employees").get().then().assertThat().statusCode(200).extract().as(Employee[].class));
+        return Arrays.asList(mainRequest().basePath("/employees").get()
+                .then().assertThat().statusCode(200).extract().as(Employee[].class));
     }
 
     @Step("Add new employee, return new list of employees")
@@ -96,6 +91,22 @@ public class Methods {
     public static String delEmployee(String type, Object id) {
         return mainRequest().basePath("/employees/delete").queryParam(type, id).post()
                 .then().assertThat().statusCode(200).extract().asString();
+    }
+
+    @Step("Generate new Employee with random data")
+    public Employee genNewEmpl() {
+        Employee empl = new Employee
+                (RandomUtils.nextInt(1000, 10000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 80));
+        Allure.addAttachment("New Employee Data", empl.toString());
+        return empl;
+    }
+
+    @Step("Verify that {0}")
+    public void verify(String check, Object o1, Object o2, boolean equals) {
+        if(equals)
+            assertEquals(o1, o2);
+        else
+            assertNotEquals(o1, o2);
     }
 
     //Data provider used in the 'checkEmployee' test
