@@ -103,7 +103,7 @@ public class Methods {
         return empl;
     }
 
-    //Separate method for assertions, needed to attach as step to report
+    //Separate method for assertions, needed to attach as step to report. String 'check' is added to step in place of {0}
     @Step("Verify that {0}")
     public void verify(String check, Object o1, Object o2, boolean equals) {
         if(equals)

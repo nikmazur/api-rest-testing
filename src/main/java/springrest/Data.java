@@ -10,7 +10,7 @@ import java.util.Properties;
 
 public class Data {
 
-    //ArrayList for storing data about our Employees + getter
+    //ArrayList for storing data about our employees + getter
     private static ArrayList<Employee> comp = new ArrayList<>();
     public static ArrayList<Employee> getComp() {
         return comp;
@@ -35,14 +35,16 @@ public class Data {
         }
     }
 
-    public static void addEmpl(int ID, String name, String title, int age) {
-        comp.add(new Employee(ID, name, title, age));
+    public static ArrayList<Employee> addEmpl(Employee empl) {
+        comp.add(empl);
+        return comp;
     }
 
     public void delEmpl(int index) {
         comp.remove(index);
     }
 
+    //For deleting employee by name
     public boolean delEmplName(String name) {
         return comp.removeIf(x -> x.getName().equals(name));
     }

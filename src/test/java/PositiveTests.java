@@ -11,6 +11,7 @@ import springrest.Employee;
 @Owner("Mazur N.")
 public class PositiveTests extends Methods {
 
+    //Priority is for running this test first. @Severity, @Description and @Flaky are for the report.
     @Test(description = "Smoke availability", priority = 1)
     @Severity(value = SeverityLevel.CRITICAL)
     @Description("Checks for the HTTP 200 status code. Will fail randomly.")
@@ -30,7 +31,7 @@ public class PositiveTests extends Methods {
     @Description("Verify that the starting Employees set is not empty.")
     public void notEmpty() {
         verify("the response is not empty",
-                getEmployees().stream().count(), (long) 0, false);
+                getEmployees().size(), 0, false);
     }
 
 
@@ -42,6 +43,7 @@ public class PositiveTests extends Methods {
                 getEmployees().stream()
                         .filter(x -> x.getId() == ID && x.getName().equals(NAME))
                         .count(), (long) 0, false);
+        //0 is type cast to long because count() returns long. Comparing int to long would cause a false positive
     }
 
     @Test (description =  "Add new employee")
@@ -91,9 +93,9 @@ public class PositiveTests extends Methods {
     }
 
     @Test (description =  "Zero ID")
-    @Description("Verify that no employee has an ID = 0")
+    @Description("Verify that no employee has an ID 0")
     public void zeroId() {
-        verify("there is 0 employees in the list with ID = 0",
+        verify("there is 0 employees in the list with ID 0",
                 getEmployees().stream()
                         .filter(x -> x.getId() == 0)
                         .count(), (long) 0, true);

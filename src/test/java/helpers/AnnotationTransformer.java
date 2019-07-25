@@ -6,6 +6,7 @@ import org.testng.annotations.ITestAnnotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+//Used for retrying tests if they are failed
 public class AnnotationTransformer implements IAnnotationTransformer {
 
     @Override

@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
@@ -27,33 +26,18 @@ public class Controller extends Data {
 
     //Adds new employee. Returns the resulting contents of the map with the new data.
     @RequestMapping(value = "/employees/add", method = RequestMethod.POST)
-    public ArrayList<Employee> addEmpl(@RequestBody HashMap<String, String> input) {
-        /* Check whether only numbers are passed in the numeric fields age & salary.
-         * This is done by trying to convert them to double. In case of an exception error 405 is returned. */
-        int age;
-        int ID;
-        try {
-            age = Integer.parseInt(input.get("age"));
-            ID = Integer.parseInt(input.get("id"));
-        } catch(NumberFormatException nfe) {
-            throw new ResourceBadRequestException();
-        }
-
-        //Check and remove any commas from name using the replace() method
-        String name = input.get("name").replace(",", "");
-        String title = input.get("title");
+    public static ArrayList<Employee> addEmpl(@RequestBody Employee e) {
 
         //Check if name or title contains only numbers
-        if(isNumeric(name) || isNumeric(title))
+        if(isNumeric(e.getName()) || isNumeric(e.getTitle()))
             throw new ResourceBadRequestException();
 
-        //Checking input data: name not empty or only spaces (using trim()). Age & salary not 0.
-        if(name.trim().length() > 0 && title.trim().length() > 0 && age != 0 && ID != 0)
-            Data.addEmpl(ID, name, title, age);
+        //Checking input data: name or title not empty or only spaces (using trim()). Age & ID not 0.
+        if(e.getName().trim().length() > 0 && e.getTitle().trim().length() > 0 && e.getAge() != 0 && e.getId() != 0) {
+            return Data.addEmpl(e);
+        }
         else
             throw new ResourceBadRequestException();
-
-        return Data.getComp();
     }
 
     /* Handles requests for deleting employees. Result is returned as text.

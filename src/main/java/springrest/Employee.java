@@ -9,7 +9,8 @@ public class Employee {
 
     public Employee(int id, String name, String title, int age) {
         this.id = id;
-        this.name = name;
+        //Check and remove any commas from name using the replace() method
+        this.name = name.replace(",", "");
         this.title = title;
         this.age = age;
     }
@@ -31,6 +32,7 @@ public class Employee {
     }
 
 
+    //For attaching data to report
     @Override
     public String toString() {
         return "Employee: id=" + id + ", name=" + name +", title=" + title + ", age=" + age;

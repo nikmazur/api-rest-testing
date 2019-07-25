@@ -4,11 +4,12 @@ import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
 //https://www.toolsqa.com/selenium-webdriver/retry-failed-tests-testng/
-// This listener is used for retrying tests if they are failed
+//Used for retrying tests if they are failed
 
 public class RetryAnalyzer implements IRetryAnalyzer {
 
     int counter = 0;
+    //Number of retries
     int limit = 3;
 
     @Override

@@ -24,3 +24,7 @@ target/
 
 # Default folder for compilation files in IDEA
 out/
+
+# Allure report files
+.allure/
+allure-results
