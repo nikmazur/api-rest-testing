@@ -5,14 +5,15 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
 import io.restassured.specification.RequestSpecification;
+import models.Employee;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
-import springrest.Application;
-import springrest.Employee;
+import server.RunServer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -28,23 +29,26 @@ import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-//Listener for attaching request & response logs to Allure
-@Listeners(LogListener.class)
+// Listener for attaching request & response logs to Allure
+//@Listeners(LogListener.class)
 public class Methods {
 
     public static Faker faker;
 
     @BeforeSuite
     @Step("Launch the Spring REST server")
-    public void launchServer() throws IOException {
-        Application.main(new String[]{""});
+    public static void launchServer() throws IOException {
+
+        RunServer.main(new String[]{""});
         faker = new Faker();
 
         Properties prop = new Properties();
         Reader propReader = Files.newBufferedReader(Paths.get("src/main/resources/application.properties"));
         prop.load(propReader);
-        //Get server address from application properties
+        // Get server address from application properties
         RestAssured.baseURI = "http://" + prop.getProperty("address") + ":" + prop.getProperty("server.port");
+        // For parsing arrays from JSON
+        RestAssured.defaultParser = Parser.JSON;
     }
 
     @AfterSuite
@@ -84,14 +88,14 @@ public class Methods {
     }
 
     @Step("Add new employee, return new list of employees")
-    public static List<Employee> addEmployee(Employee empl) {
-        return Arrays.asList(mainRequest().basePath("/employees/add").body(empl).post()
-                .then().assertThat().statusCode(200).extract().as(Employee[].class));
+    public static List<Employee> addEmployee(Employee empl, int statusCode) {
+        return Arrays.asList(mainRequest().basePath("/employees/add").body(empl).put()
+                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
     }
 
     @Step("Request to delete an employee (by Name or Index)")
     public static String delEmployee(String type, Object id) {
-        return mainRequest().basePath("/employees/delete").queryParam(type, id).post()
+        return mainRequest().basePath("/employees/delete").header(type, id).post()
                 .then().assertThat().statusCode(200).extract().asString();
     }
 

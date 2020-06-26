@@ -1,11 +1,14 @@
-package springrest;
+package models;
 
 public class Employee {
 
-    private int id;
+    private Integer id;
     private String name;
     private String title;
-    private int age;
+    private Integer age;
+
+    public Employee() {
+    }
 
     public Employee(int id, String name, String title, int age) {
         this.id = id;
@@ -49,10 +52,10 @@ public class Employee {
         Employee empl = (Employee) o;
 
         //Returns true if all params in both objects are equal, false otherwise
-        return empl.id == (id) &&
+        return empl.id.equals(id) &&
                 empl.name.equals(name) &&
                 empl.title.equals(title) &&
-                empl.age == (age);
+                empl.age.equals(age);
     }
 
 }

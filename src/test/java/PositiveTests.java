@@ -1,9 +1,9 @@
 import helpers.Methods;
 import io.qameta.allure.*;
+import models.Employee;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import springrest.Employee;
 
 @Epic("API Testing")
 @Feature("Testing a REST API server with Rest Assured")
@@ -11,20 +11,12 @@ import springrest.Employee;
 @Owner("Mazur N.")
 public class PositiveTests extends Methods {
 
-    //Priority is for running this test first. @Severity, @Description and @Flaky are for the report.
+    // Priority is for running this test first. @Severity, @Description and @Flaky are for the report.
     @Test(description = "Smoke availability", priority = 1)
     @Severity(value = SeverityLevel.CRITICAL)
-    @Description("Checks for the HTTP 200 status code. Will fail randomly.")
-    @Flaky
+    @Description("Check REST server availability.")
     public void ping() {
-        try {
-            //Comment this to disable random failing.
-            verify("status code 200 is returned", getStatus("/ping"), 200, true);
-        }
-        catch(AssertionError ae) {
-            //Example of a custom message upon test failure using try-catch blocks
-            Assert.fail("Ping Failed! Resource was not available.");
-        }
+        verify("status code 200 is returned", getStatus("/ping"), 200, true);
     }
 
     @Test (description =  "Employees not empty", dependsOnMethods = "ping")
@@ -35,15 +27,15 @@ public class PositiveTests extends Methods {
     }
 
 
-    //This test uses a data provider 'getEmpl' (listed in helpers.Methods) and will run multiple times.
+    // This test uses a data provider 'getEmpl' (listed in helpers.Methods) and will run multiple times.
     @Test (description =  "Check employee", dataProvider = "getEmpl")
     @Description("Check the contents of JSON for specific data (name & index of an employee).")
     public void checkEmployee(int ID, String NAME) {
         verify("each ID & Name is matched in list",
                 getEmployees().stream()
                         .filter(x -> x.getId() == ID && x.getName().equals(NAME))
+                        // 0 is type cast to long because count() returns long. Comparing int to long would cause a false positive
                         .count(), (long) 0, false);
-        //0 is type cast to long because count() returns long. Comparing int to long would cause a false positive
     }
 
     @Test (description =  "Add new employee")
@@ -51,7 +43,7 @@ public class PositiveTests extends Methods {
     public void addNewEmployee() {
         Employee newEmpl = genNewEmpl();
         verify("the new employee is listed in the returned list",
-                addEmployee(newEmpl).stream().anyMatch(x -> x.equals(newEmpl)), true, true);
+                addEmployee(newEmpl, 201).stream().anyMatch(x -> x.equals(newEmpl)), true, true);
     }
 
     /* This and the next test are set to run only after the other tests which are dependent on content
@@ -59,13 +51,13 @@ public class PositiveTests extends Methods {
     @Test (description =  "Remove employee by Index", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeIndex() {
         verify("deletion is confirmed",
-                delEmployee("ind", 1), "Employee deleted", true);
+                delEmployee("delete.ind", 1), "Employee deleted", true);
     }
 
     @Test (description =  "Remove employee by Name", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
         verify("deletion is confirmed",
-                delEmployee("name", getEmpl()[0][1]), "Employee deleted", true);
+                delEmployee("delete.name", getEmpl()[0][1]), "Employee deleted", true);
     }
 
     @Test (description =  "Comma in Name")
@@ -78,7 +70,7 @@ public class PositiveTests extends Methods {
                 (RandomUtils.nextInt(1, 10000), commaName, faker.company().profession(), RandomUtils.nextInt(18, 80));
 
         verify("name was added without a comma",
-                addEmployee(newEmpl).stream()
+                addEmployee(newEmpl, 201).stream()
                         .filter(x -> x.getName().equals(commaName.replace(",", "")))
                         .count(), (long) 0, false);
     }
@@ -99,6 +91,20 @@ public class PositiveTests extends Methods {
                 getEmployees().stream()
                         .filter(x -> x.getId() == 0)
                         .count(), (long) 0, true);
+    }
+
+    // This test will fail randomly
+    @Test(description = "Random fail", priority = 1)
+    @Description("Checks for the HTTP 200 status code. Will fail randomly.")
+    @Flaky
+    public void randomFail() {
+        try {
+            verify("status code 200 is returned", getStatus("/random"), 200, true);
+        }
+        catch(AssertionError ae) {
+            // Example of a custom message upon test failure using try-catch blocks
+            Assert.fail("Ping Failed! Resource was not available.");
+        }
     }
 
 }

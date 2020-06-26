@@ -5,6 +5,7 @@ import io.restassured.RestAssured;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
+import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -12,10 +13,10 @@ import org.testng.ITestResult;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-//http://automation-remarks.com/2017/rest-assured-allure-log/index.html
-//Used for logging API requests & responses to report
+// http://automation-remarks.com/2017/rest-assured-allure-log/index.html
+// Used for logging API requests & responses to report
 
-public class LogListener implements ITestListener {
+public class LogListener implements ITestListener, ISuiteListener {
     private ByteArrayOutputStream request = new ByteArrayOutputStream();
     private ByteArrayOutputStream response = new ByteArrayOutputStream();
 
@@ -27,7 +28,7 @@ public class LogListener implements ITestListener {
                 new RequestLoggingFilter(LogDetail.ALL, requestVar));
     }
 
-    //Currently configured to attach logs for Passed, Failed or Skipped tests
+    // Currently configured to attach logs for Passed, Failed or Skipped tests
     public void onTestSuccess(ITestResult result) {
         log();
     }
