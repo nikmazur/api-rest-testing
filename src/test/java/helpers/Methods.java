@@ -8,11 +8,11 @@ import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import io.restassured.specification.RequestSpecification;
 import models.Employee;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
 import server.RunServer;
 
 import java.io.File;
@@ -41,12 +41,10 @@ public class Methods {
 
         RunServer.main(new String[]{""});
         faker = new Faker();
+        ServerConfig conf = ConfigFactory.create(ServerConfig.class);
 
-        Properties prop = new Properties();
-        Reader propReader = Files.newBufferedReader(Paths.get("src/main/resources/application.properties"));
-        prop.load(propReader);
-        // Get server address from application properties
-        RestAssured.baseURI = "http://" + prop.getProperty("address") + ":" + prop.getProperty("server.port");
+        // Get server address from properties
+        RestAssured.baseURI = "http://" + conf.address() + ":" + conf.port();
         // For parsing arrays from JSON
         RestAssured.defaultParser = Parser.JSON;
     }
@@ -55,7 +53,7 @@ public class Methods {
     @Step("Generate new Employees for the next run")
     public void generateEmployees() throws IOException {
 
-        //Writes random employee data to local prop files (will be used in the next run)
+        // Writes random employee data to local prop files (will be used in the next run)
         for(int i = 1; i < 4; ++i) {
             Employee empl = genNewEmpl();
             Properties emplProp = new Properties();

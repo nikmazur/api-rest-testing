@@ -12,10 +12,10 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static server.Data.*;
 
-public class Expectations {
+public class Expectations extends RunServer {
 
     static ObjectMapper mapper = new ObjectMapper();
-    static MockServerClient mockServerClient = new MockServerClient("localhost", 8188);
+    static MockServerClient mockServerClient = new MockServerClient(conf.address(), conf.port());
 
     public static void ping() {
         mockServerClient

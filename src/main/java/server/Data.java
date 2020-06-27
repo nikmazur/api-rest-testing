@@ -13,15 +13,15 @@ import java.util.Properties;
 
 public class Data {
 
-    //ArrayList for storing data about our employees
+    // List for storing data about our employees
     private static List<Employee> comp = new ArrayList<>();
 
     public static List<Employee> getComp() {
         return comp;
     }
 
-    //Constructor populates ArrayList with initial Employees data
-    public Data() {
+    // Populates ArrayList with initial Employees data
+    public static void initEmployees() {
         for(int i = 1; i < 4; ++i) {
             Properties prop = new Properties();
             try {
@@ -47,7 +47,7 @@ public class Data {
         comp.remove(index);
     }
 
-    //For deleting employee by name
+    // For deleting employee by name
     public static boolean delEmplName(String name) {
         return comp.removeIf(x -> x.getName().equals(name));
     }
