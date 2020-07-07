@@ -19,7 +19,7 @@ public class PositiveTests extends Steps {
     }
 
     @Test (description =  "Employees not empty", dependsOnMethods = "ping")
-    @Description("Verify that the starting Employees set is not empty.")
+    @Description("Verify that the starting Employees list is not empty.")
     public void notEmpty() {
         verify("the response is not empty",
                 getEmployees().size(), 0, false);
@@ -30,7 +30,7 @@ public class PositiveTests extends Steps {
     @Test (description =  "Check employee", dataProvider = "getEmpl")
     @Description("Check the contents of JSON for specific data (name & index of an employee).")
     public void checkEmployee(int ID, String NAME) {
-        verify("each ID & Name is matched in list",
+        verify("that there is a match in the list for each employee",
                 getEmployees().stream().filter(x -> x.getId() == ID && x.getName().equals(NAME))
                         // 0 is type cast to long because count() returns long. Comparing int to long would cause a false positive
                         .count(), (long) 0, false);
