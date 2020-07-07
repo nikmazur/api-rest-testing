@@ -12,7 +12,6 @@ public class Employee {
 
     public Employee(int id, String name, String title, int age) {
         this.id = id;
-        //Check and remove any commas from name using the replace() method
         this.name = name;
         this.title = title;
         this.age = age;

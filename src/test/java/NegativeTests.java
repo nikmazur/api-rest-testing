@@ -1,4 +1,3 @@
-import helpers.Methods;
 import io.qameta.allure.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -9,12 +8,12 @@ import models.Employee;
 @Feature("Testing a REST API server with Rest Assured")
 @Story("Negative Tests")
 @Owner("Mazur N.")
-public class NegativeTests extends Methods {
+public class NegativeTests extends Steps {
 
     @Test (description =  "Bad URL")
     @Description("Access a bad URL (part of which is randomly generated)")
     public void negBadURL() {
-        verify("status code 200 is returned",
+        verify("status code 404 is returned",
                 getStatus("/" + RandomStringUtils.randomAlphabetic(5)), 404, true);
     }
 
@@ -24,13 +23,6 @@ public class NegativeTests extends Methods {
         delEmployee("delete", "", 400);
     }
 
-    @Test (description =  "Bad input: Empty name")
-    @Description("Add an employee without a required field (name is missing)")
-    public void negAddEmpl() {
-        addEmployee(new Employee(RandomUtils.nextInt(1000, 10000), "",
-                        faker.company().profession(), RandomUtils.nextInt(18, 80)), 400);
-    }
-
     @Test (description =  "Bad input: Numbers in text")
     @Description("Add an employee, title has number instead of letters")
     public void negTextInput() {
@@ -38,10 +30,10 @@ public class NegativeTests extends Methods {
                         RandomStringUtils.randomNumeric(3), RandomUtils.nextInt(18, 80)), 400);
     }
 
-    @Test (description =  "Bad input: blank name")
+    @Test (description =  "Bad input: Blank name")
     @Description("Add an employee, name does not contain any letters, only spaces")
     public void negTextSpaces() {
         addEmployee(new Employee
-                (RandomUtils.nextInt(1000, 10000), "   ", faker.company().profession(), RandomUtils.nextInt(18, 80)), 400);
+                (RandomUtils.nextInt(1000, 10000), "  ", faker.company().profession(), RandomUtils.nextInt(18, 80)), 400);
     }
 }

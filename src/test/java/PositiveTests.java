@@ -1,4 +1,3 @@
-import helpers.Methods;
 import io.qameta.allure.*;
 import models.Employee;
 import org.apache.commons.lang3.RandomUtils;
@@ -9,7 +8,7 @@ import org.testng.annotations.Test;
 @Feature("Testing a REST API server with Rest Assured")
 @Story("Positive Tests")
 @Owner("Mazur N.")
-public class PositiveTests extends Methods {
+public class PositiveTests extends Steps {
 
     // Priority is for running this test first. @Severity and @Description are for the report.
     @Test(description = "Smoke availability", priority = 1)
@@ -27,13 +26,12 @@ public class PositiveTests extends Methods {
     }
 
 
-    // This test uses a data provider 'getEmpl' (listed in helpers.Methods) and will run multiple times.
+    // This test uses a data provider 'getEmpl' (listed in Steps) and will run multiple times.
     @Test (description =  "Check employee", dataProvider = "getEmpl")
     @Description("Check the contents of JSON for specific data (name & index of an employee).")
     public void checkEmployee(int ID, String NAME) {
         verify("each ID & Name is matched in list",
-                getEmployees().stream()
-                        .filter(x -> x.getId() == ID && x.getName().equals(NAME))
+                getEmployees().stream().filter(x -> x.getId() == ID && x.getName().equals(NAME))
                         // 0 is type cast to long because count() returns long. Comparing int to long would cause a false positive
                         .count(), (long) 0, false);
     }
@@ -50,8 +48,7 @@ public class PositiveTests extends Methods {
      * have been passed, so as not to interfere with them and cause a false fail. */
     @Test (description =  "Remove employee by Index", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeIndex() {
-        verify("deletion is confirmed",
-                delEmployee("delete.ind", getEmpl()[0][0], 200)
+        verify("deletion is confirmed", delEmployee("delete.ind", getEmpl()[0][0], 200)
                         .stream().anyMatch(x -> x.getId() == (int)(getEmpl()[0][0])), false, true);
     }
 
@@ -80,19 +77,15 @@ public class PositiveTests extends Methods {
     @Test (description =  "Check employee age")
     @Description("Verify that all employees are 18 or older.")
     public void checkAge() {
-        verify("there is 0 employees in the list younger than 18",
-                getEmployees().stream()
-                        .filter(x -> x.getAge() < 18)
-                        .count(), (long) 0, true);
+        verify("there are no employees in the list younger than 18",
+                getEmployees().stream().filter(x -> x.getAge() < 18).count(), (long) 0, true);
     }
 
     @Test (description =  "Zero ID")
     @Description("Verify that no employee has an ID 0")
     public void zeroId() {
-        verify("there is 0 employees in the list with ID 0",
-                getEmployees().stream()
-                        .filter(x -> x.getId() == 0)
-                        .count(), (long) 0, true);
+        verify("there are no employees in the list with ID 0",
+                getEmployees().stream().filter(x -> x.getId() == 0).count(), (long) 0, true);
     }
 
     // This test will fail randomly
@@ -102,8 +95,7 @@ public class PositiveTests extends Methods {
     public void randomFail() {
         try {
             verify("status code 200 is returned", getStatus("/random"), 200, true);
-        }
-        catch(AssertionError ae) {
+        } catch(AssertionError ae) {
             // Example of a custom message upon test failure using try-catch blocks
             Assert.fail("Ping Failed! Resource was not available.");
         }

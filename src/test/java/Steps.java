@@ -1,6 +1,6 @@
-package helpers;
-
 import com.github.javafaker.Faker;
+import helpers.AllureFilter;
+import helpers.ServerConfig;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
@@ -29,12 +29,12 @@ import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-public class Methods {
+public class Steps {
 
     public static Faker faker;
 
     @BeforeSuite
-    @Step("Launch the Spring REST server")
+    @Step("Launch REST server, set up Rest Assured")
     public static void launchServer() throws IOException {
 
         RunServer.main(new String[]{"testing"});
@@ -68,7 +68,7 @@ public class Methods {
         }
     }
 
-    public static RequestSpecification mainRequest() {
+    private static RequestSpecification mainRequest() {
         return given().baseUri(RestAssured.baseURI)
                 .contentType(ContentType.JSON).accept(ContentType.JSON).filter(new AllureFilter());
     }
