@@ -43,13 +43,12 @@ public class Data {
         comp.add(empl);
     }
 
-    public static void delEmpl(int index) {
-        comp.remove(index);
+    public static void delEmplIndex(int index) {
+        comp.removeIf(x -> x.getId() == index);
     }
 
-    // For deleting employee by name
-    public static boolean delEmplName(String name) {
-        return comp.removeIf(x -> x.getName().equals(name));
+    public static void delEmplName(String name) {
+        comp.removeIf(x -> x.getName().equals(name));
     }
 
 }

@@ -29,8 +29,6 @@ import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-// Listener for attaching request & response logs to Allure
-//@Listeners(LogListener.class)
 public class Methods {
 
     public static Faker faker;
@@ -39,13 +37,13 @@ public class Methods {
     @Step("Launch the Spring REST server")
     public static void launchServer() throws IOException {
 
-        RunServer.main(new String[]{""});
+        RunServer.main(new String[]{"testing"});
         faker = new Faker();
         ServerConfig conf = ConfigFactory.create(ServerConfig.class);
 
         // Get server address from properties
         RestAssured.baseURI = "http://" + conf.address() + ":" + conf.port();
-        // For parsing arrays from JSON
+        // For parsing POJO from JSON
         RestAssured.defaultParser = Parser.JSON;
     }
 
@@ -71,7 +69,8 @@ public class Methods {
     }
 
     public static RequestSpecification mainRequest() {
-        return given().baseUri(RestAssured.baseURI).contentType(ContentType.JSON).accept(ContentType.JSON);
+        return given().baseUri(RestAssured.baseURI)
+                .contentType(ContentType.JSON).accept(ContentType.JSON).filter(new AllureFilter());
     }
 
     @Step("Get server status")
@@ -92,9 +91,9 @@ public class Methods {
     }
 
     @Step("Request to delete an employee (by Name or Index)")
-    public static String delEmployee(String type, Object id) {
-        return mainRequest().basePath("/employees/delete").header(type, id).post()
-                .then().assertThat().statusCode(200).extract().asString();
+    public static List<Employee> delEmployee(String type, Object id, int statusCode) {
+        return Arrays.asList(mainRequest().basePath("/employees/delete").header(type, id).post()
+                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
     }
 
     @Step("Generate new Employee with random data")

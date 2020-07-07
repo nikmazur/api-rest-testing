@@ -19,17 +19,9 @@ public class NegativeTests extends Methods {
     }
 
     @Test (description =  "Delete w/o params")
-    @Description("Access delete method without any parameters. Should return 'Not found'")
+    @Description("Access delete method without any parameters. Should return status code 400")
     public void negDelNoParams() {
-        verify("deletion is confirmed",
-                delEmployee("delete", ""), "Employee not found", true);
-    }
-
-    @Test (description =  "Delete w/ wrong params")
-    @Description("Pass wrong parameters - index instead of name. Should return 'Not found'")
-    public void negDelRandomName() {
-        verify("deletion is confirmed",
-                delEmployee("delete.name", RandomStringUtils.randomAlphabetic(5)), "Employee not found", true);
+        delEmployee("delete", "", 400);
     }
 
     @Test (description =  "Bad input: Empty name")

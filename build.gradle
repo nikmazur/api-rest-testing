@@ -35,8 +35,8 @@ test {
     ignoreFailures = true
     useTestNG {
         setParallel('methods')
-        setThreadCount(1)
+        setThreadCount(8)
         useDefaultListeners = true
-        listeners << "helpers.LogListener"
+        listeners << "helpers.AnnotationTransformer"
     }
 }

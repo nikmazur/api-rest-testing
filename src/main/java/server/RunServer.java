@@ -16,12 +16,18 @@ import static server.Expectations.*;
 
 public class RunServer {
 
-    protected static ServerConfig conf = ConfigFactory.create(ServerConfig.class);
+    public static final ServerConfig CONF = ConfigFactory.create(ServerConfig.class);
 
     public static void main(String[] args) throws IOException {
 
-        ClientAndServer.startClientAndServer(conf.port());
-        setUpLogging();
+        ClientAndServer.startClientAndServer(CONF.port());
+
+        // Log to console if ran from main, to file if from test. Test sends 'testing' as arg.
+        if(args.length == 0)
+            logToConsole();
+        else
+            logToFile();
+
         initEmployees();
 
         // Setting expectations
@@ -32,14 +38,21 @@ public class RunServer {
         random();
     }
 
-    private static void setUpLogging() throws IOException {
-        // For writing logs to file
+    private static void logToConsole() throws IOException {
         String loggingConfiguration =
                 "java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n\n" +
-                "handlers=java.util.logging.FileHandler\n" +
-                "java.util.logging.FileHandler.level=ALL\n" +
-                "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n" +
-                "java.util.logging.FileHandler.pattern=" +
+                        "handlers=org.mockserver.logging.StandardOutConsoleHandler\n" +
+                        "org.mockserver.logging.StandardOutConsoleHandler.level=ALL";
+        LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(loggingConfiguration.getBytes(UTF_8)));
+    }
+
+    private static void logToFile() throws IOException {
+        String loggingConfiguration =
+                "java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n\n" +
+                        "handlers=java.util.logging.FileHandler\n" +
+                        "java.util.logging.FileHandler.level=ALL\n" +
+                        "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n" +
+                        "java.util.logging.FileHandler.pattern=" +
                         new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_Server.log";
         LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(loggingConfiguration.getBytes(UTF_8)));
     }

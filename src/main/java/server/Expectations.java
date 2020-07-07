@@ -11,11 +11,12 @@ import static org.mockserver.model.Header.header;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static server.Data.*;
+import static server.RunServer.CONF;
 
-public class Expectations extends RunServer {
+public class Expectations {
 
     static ObjectMapper mapper = new ObjectMapper();
-    static MockServerClient mockServerClient = new MockServerClient(conf.address(), conf.port());
+    static MockServerClient mockServerClient = new MockServerClient(CONF.address(), CONF.port());
 
     public static void ping() {
         mockServerClient
@@ -44,6 +45,7 @@ public class Expectations extends RunServer {
                             // Checks that Name is not empty, Title is not numeric
                             if (!newEmpl.getName().isEmpty() && newEmpl.getName().trim().length() > 0 &&
                                     !NumberUtils.isCreatable(newEmpl.getTitle())) {
+                                newEmpl.setName(newEmpl.getName().replace(",", ""));
                                 addEmpl(newEmpl);
                                 return response().withStatusCode(201).withBody(mapper.writeValueAsString(getComp()));
                             } else {
@@ -66,15 +68,13 @@ public class Expectations extends RunServer {
 
                             // Check if number or text
                             if(NumberUtils.isCreatable(value)) {
-                                delEmpl(NumberUtils.toInt(value));
-                                return response().withBody("Employee deleted");
+                                delEmplIndex(NumberUtils.toInt(value));
+                                return response().withStatusCode(200).withBody(mapper.writeValueAsString(getComp()));
                             } else if(!value.isEmpty()) {
-                                if(delEmplName(value))
-                                    return response().withBody("Employee deleted");
-                                else
-                                    return response().withBody("Employee not found");
+                                delEmplName(value);
+                                return response().withStatusCode(200).withBody(mapper.writeValueAsString(getComp()));
                             } else {
-                                return response().withBody("Employee not found");
+                                return response().withStatusCode(400).withBody(mapper.writeValueAsString(getComp()));
                             }
                         }
                 );

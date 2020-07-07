@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 @Owner("Mazur N.")
 public class PositiveTests extends Methods {
 
-    // Priority is for running this test first. @Severity, @Description and @Flaky are for the report.
+    // Priority is for running this test first. @Severity and @Description are for the report.
     @Test(description = "Smoke availability", priority = 1)
     @Severity(value = SeverityLevel.CRITICAL)
     @Description("Check REST server availability.")
@@ -51,13 +51,15 @@ public class PositiveTests extends Methods {
     @Test (description =  "Remove employee by Index", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeIndex() {
         verify("deletion is confirmed",
-                delEmployee("delete.ind", 1), "Employee deleted", true);
+                delEmployee("delete.ind", getEmpl()[0][0], 200)
+                        .stream().anyMatch(x -> x.getId() == (int)(getEmpl()[0][0])), false, true);
     }
 
     @Test (description =  "Remove employee by Name", dependsOnMethods = {"ping", "notEmpty", "checkEmployee"})
     public void delEmployeeName() {
         verify("deletion is confirmed",
-                delEmployee("delete.name", getEmpl()[0][1]), "Employee deleted", true);
+                delEmployee("delete.name", getEmpl()[0][1], 200)
+                        .stream().anyMatch(x -> x.getName().equals(getEmpl()[0][1])), false, true);
     }
 
     @Test (description =  "Comma in Name")
@@ -94,7 +96,7 @@ public class PositiveTests extends Methods {
     }
 
     // This test will fail randomly
-    @Test(description = "Random fail", priority = 1)
+    @Test(description = "Random fail")
     @Description("Checks for the HTTP 200 status code. Will fail randomly.")
     @Flaky
     public void randomFail() {
