@@ -3,7 +3,6 @@
 
 # Log file
 *.log
-spring-log.log*
 
 # Package Files #
 *.jar
@@ -19,8 +18,10 @@ spring-log.log*
 # Files created by IDEA for project modules
 *.iml
 
-# Maven files
-target/
+# Gradle
+.gradle
+gradle/
+/build/
 
 # Default folder for compilation files in IDEA
 out/

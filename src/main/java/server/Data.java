@@ -1,23 +1,27 @@
-package springrest;
+package server;
+
+import models.Employee;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 
 public class Data {
 
-    //ArrayList for storing data about our employees + getter
-    private static ArrayList<Employee> comp = new ArrayList<>();
-    public static ArrayList<Employee> getComp() {
+    // List for storing data about our employees
+    private static List<Employee> comp = new ArrayList<>();
+
+    public static List<Employee> getComp() {
         return comp;
     }
 
-    //Constructor populates ArrayList with initial Employees data
-    public Data() {
+    // Populates ArrayList with initial Employees data
+    public static void initEmployees() {
         for(int i = 1; i < 4; ++i) {
             Properties prop = new Properties();
             try {
@@ -35,18 +39,16 @@ public class Data {
         }
     }
 
-    public static ArrayList<Employee> addEmpl(Employee empl) {
+    public static void addEmpl(Employee empl) {
         comp.add(empl);
-        return comp;
     }
 
-    public void delEmpl(int index) {
-        comp.remove(index);
+    public static void delEmplIndex(int index) {
+        comp.removeIf(x -> x.getId() == index);
     }
 
-    //For deleting employee by name
-    public boolean delEmplName(String name) {
-        return comp.removeIf(x -> x.getName().equals(name));
+    public static void delEmplName(String name) {
+        comp.removeIf(x -> x.getName().equals(name));
     }
 
 }

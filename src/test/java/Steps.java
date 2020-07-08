@@ -1,18 +1,19 @@
-package helpers;
-
 import com.github.javafaker.Faker;
+import helpers.AllureFilter;
+import helpers.ServerConfig;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
 import io.restassured.specification.RequestSpecification;
+import models.Employee;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
-import springrest.Application;
-import springrest.Employee;
+import server.RunServer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -28,30 +29,29 @@ import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-//Listener for attaching request & response logs to Allure
-@Listeners(LogListener.class)
-public class Methods {
+public class Steps {
 
     public static Faker faker;
 
     @BeforeSuite
-    @Step("Launch the Spring REST server")
-    public void launchServer() throws IOException {
-        Application.main(new String[]{""});
-        faker = new Faker();
+    @Step("Launch REST server, set up Rest Assured")
+    public static void launchServer() throws IOException {
 
-        Properties prop = new Properties();
-        Reader propReader = Files.newBufferedReader(Paths.get("src/main/resources/application.properties"));
-        prop.load(propReader);
-        //Get server address from application properties
-        RestAssured.baseURI = "http://" + prop.getProperty("address") + ":" + prop.getProperty("server.port");
+        RunServer.main(new String[]{"testing"});
+        faker = new Faker();
+        ServerConfig conf = ConfigFactory.create(ServerConfig.class);
+
+        // Get server address from properties
+        RestAssured.baseURI = "http://" + conf.address() + ":" + conf.port();
+        // For parsing POJO from JSON
+        RestAssured.defaultParser = Parser.JSON;
     }
 
     @AfterSuite
     @Step("Generate new Employees for the next run")
     public void generateEmployees() throws IOException {
 
-        //Writes random employee data to local prop files (will be used in the next run)
+        // Writes random employee data to local prop files (will be used in the next run)
         for(int i = 1; i < 4; ++i) {
             Employee empl = genNewEmpl();
             Properties emplProp = new Properties();
@@ -68,8 +68,9 @@ public class Methods {
         }
     }
 
-    public static RequestSpecification mainRequest() {
-        return given().baseUri(RestAssured.baseURI).contentType(ContentType.JSON).accept(ContentType.JSON);
+    private static RequestSpecification mainRequest() {
+        return given().baseUri(RestAssured.baseURI)
+                .contentType(ContentType.JSON).accept(ContentType.JSON).filter(new AllureFilter());
     }
 
     @Step("Get server status")
@@ -84,15 +85,15 @@ public class Methods {
     }
 
     @Step("Add new employee, return new list of employees")
-    public static List<Employee> addEmployee(Employee empl) {
-        return Arrays.asList(mainRequest().basePath("/employees/add").body(empl).post()
-                .then().assertThat().statusCode(200).extract().as(Employee[].class));
+    public static List<Employee> addEmployee(Employee empl, int statusCode) {
+        return Arrays.asList(mainRequest().basePath("/employees/add").body(empl).put()
+                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
     }
 
     @Step("Request to delete an employee (by Name or Index)")
-    public static String delEmployee(String type, Object id) {
-        return mainRequest().basePath("/employees/delete").queryParam(type, id).post()
-                .then().assertThat().statusCode(200).extract().asString();
+    public static List<Employee> delEmployee(String type, Object id, int statusCode) {
+        return Arrays.asList(mainRequest().basePath("/employees/delete").header(type, id).post()
+                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
     }
 
     @Step("Generate new Employee with random data")
