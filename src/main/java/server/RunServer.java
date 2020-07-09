@@ -10,13 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.LogManager;
 
+import static helpers.ServerConfig.CONF;
 import static io.netty.util.CharsetUtil.UTF_8;
 import static server.Data.initEmployees;
 import static server.Expectations.*;
 
 public class RunServer {
-
-    public static final ServerConfig CONF = ConfigFactory.create(ServerConfig.class);
 
     public static void main(String[] args) throws IOException {
 

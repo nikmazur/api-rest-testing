@@ -7,11 +7,11 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mockserver.client.MockServerClient;
 
+import static helpers.ServerConfig.CONF;
 import static org.mockserver.model.Header.header;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static server.Data.*;
-import static server.RunServer.CONF;
 
 public class Expectations {
 

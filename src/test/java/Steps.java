@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import static helpers.ServerConfig.CONF;
 import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -39,10 +40,9 @@ public class Steps {
 
         RunServer.main(new String[]{"testing"});
         faker = new Faker();
-        ServerConfig conf = ConfigFactory.create(ServerConfig.class);
 
-        // Get server address from properties
-        RestAssured.baseURI = "http://" + conf.address() + ":" + conf.port();
+        // Get server address & port from properties
+        RestAssured.baseURI = "http://" + CONF.address() + ":" + CONF.port();
         // For parsing POJO from JSON
         RestAssured.defaultParser = Parser.JSON;
     }

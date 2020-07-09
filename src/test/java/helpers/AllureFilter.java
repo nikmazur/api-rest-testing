@@ -20,7 +20,7 @@ public class AllureFilter implements OrderedFilter {
                            FilterableResponseSpecification responseSpec,
                            FilterContext ctx) {
         logRequest("Request", requestTextBuilder(requestSpec).getBytes(StandardCharsets.UTF_8));
-        logRequest("Request CURL", requestCurlBuilder(requestSpec).getBytes(StandardCharsets.UTF_8));
+        logRequest("Request cURL", requestCurlBuilder(requestSpec).getBytes(StandardCharsets.UTF_8));
         Response response = ctx.next(requestSpec, responseSpec);
         logResponse(responseTextBuilder(response).getBytes(StandardCharsets.UTF_8));
         return response;

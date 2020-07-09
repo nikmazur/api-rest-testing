@@ -2,9 +2,9 @@
 This project emulates a simple REST server and tests for it. It contains a small database of employees and supports basic modification requests like adding and deleting. New employee data is generated randomly for each run and stored locally between executions.
 
 ## Run
-Needs JDK and Gradle to be installed.
+Needs JDK 8+ to be installed.
 ```bash
-gradle clean test downloadAllure allureServe
+gradlew clean test downloadAllure allureServe
 ```
 This will start a REST API server on localhost:8188, and all tests will be executed against it. Upon completion an Allure report will be generated and opened in the default browser.
 

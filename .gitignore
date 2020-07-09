@@ -20,7 +20,6 @@
 
 # Gradle
 .gradle
-gradle/
 /build/
 
 # Default folder for compilation files in IDEA
