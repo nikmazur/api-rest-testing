@@ -1,45 +1,38 @@
 import com.github.javafaker.Faker;
-import helpers.AllureFilter;
-import helpers.ServerConfig;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-import io.restassured.specification.RequestSpecification;
 import models.Employee;
-import org.aeonbits.owner.ConfigFactory;
+import models.EmployeeList;
 import org.apache.commons.lang3.RandomUtils;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import server.RunServer;
 
-import java.io.File;
-import java.io.FileWriter;
+import javax.xml.bind.JAXB;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
+import static helpers.Methods.getRandomBirthday;
 import static helpers.ServerConfig.CONF;
-import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
 public class Steps {
 
-    public static Faker faker;
+    public static Faker faker = new Faker();
 
     @BeforeSuite
     @Step("Launch REST server, set up Rest Assured")
     public static void launchServer() throws IOException {
-
         RunServer.main(new String[]{"testing"});
-        faker = new Faker();
 
         // Get server address & port from properties
         RestAssured.baseURI = "http://" + CONF.address() + ":" + CONF.port();
@@ -49,57 +42,23 @@ public class Steps {
 
     @AfterSuite
     @Step("Generate new Employees for the next run")
-    public void generateEmployees() throws IOException {
+    public void generateEmployees() {
+        // Writes random employee data to local xml file (will be used in the next run)
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get("employees.xml"))) {
+            List<Employee> emps = new ArrayList<>();
+            for(int i = 0; i <= 2; i++)
+                emps.add(genNewEmpl());
 
-        // Writes random employee data to local prop files (will be used in the next run)
-        for(int i = 1; i < 4; ++i) {
-            Employee empl = genNewEmpl();
-            Properties emplProp = new Properties();
-
-            emplProp.setProperty("ID", String.valueOf(empl.getId()));
-            emplProp.setProperty("Name", empl.getName());
-            emplProp.setProperty("Title", empl.getTitle());
-            emplProp.setProperty("Age", String.valueOf(empl.getAge()));
-
-            File file = new File("randomEmployees/Empl" + i + ".properties");
-            FileWriter writer = new FileWriter(file);
-            emplProp.store(writer,"Employee Data");
-            writer.close();
+            JAXB.marshal( new EmployeeList(emps), writer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private static RequestSpecification mainRequest() {
-        return given().baseUri(RestAssured.baseURI)
-                .contentType(ContentType.JSON).accept(ContentType.JSON).filter(new AllureFilter());
-    }
-
-    @Step("Get server status")
-    public static int getStatus(String path) {
-        return mainRequest().basePath(path).get().getStatusCode();
-    }
-
-    @Step("Retrieve all employees, return as list")
-    public static List<Employee> getEmployees() {
-        return Arrays.asList(mainRequest().basePath("/employees").get()
-                .then().assertThat().statusCode(200).extract().as(Employee[].class));
-    }
-
-    @Step("Add new employee, return new list of employees")
-    public static List<Employee> addEmployee(Employee empl, int statusCode) {
-        return Arrays.asList(mainRequest().basePath("/employees/add").body(empl).put()
-                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
-    }
-
-    @Step("Request to delete an employee (by Name or Index)")
-    public static List<Employee> delEmployee(String type, Object id, int statusCode) {
-        return Arrays.asList(mainRequest().basePath("/employees/delete").header(type, id).post()
-                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
-    }
-
     @Step("Generate new Employee with random data")
-    public Employee genNewEmpl() {
+    public static Employee genNewEmpl() {
         Employee empl = new Employee
-                (RandomUtils.nextInt(1000, 10000), faker.name().fullName(), faker.company().profession(), RandomUtils.nextInt(18, 80));
+                (RandomUtils.nextInt(1000, 10000), faker.name().fullName(), faker.company().profession(), getRandomBirthday(1970, 18));
         Allure.addAttachment("New Employee Data", empl.toString());
         return empl;
     }
@@ -119,18 +78,15 @@ public class Steps {
     {
         Object[][] data = new Object[3][2];
 
-        //Read employee data from local files
-        for(int i = 1; i < 4; ++i) {
-            Properties prop = new Properties();
-            try {
-                Reader propReader = Files.newBufferedReader(Paths.get("randomEmployees/Empl" + i + ".properties"));
-                prop.load(propReader);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+        //Read employee data from local XML file
+        try(BufferedReader reader = Files.newBufferedReader(Paths.get("employees.xml"))){
+            EmployeeList employeeList = JAXB.unmarshal(reader, EmployeeList.class);
+            for(int i = 0; i <= 2; i++) {
+                data[i][0] = employeeList.getEmployees().get(i).getId();
+                data[i][1] = employeeList.getEmployees().get(i).getName();
             }
-
-            data[i-1][0] = Integer.parseInt(prop.getProperty("ID"));
-            data[i-1][1] = prop.getProperty("Name");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return data;

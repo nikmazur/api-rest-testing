@@ -6,19 +6,19 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 public class Employee {
 
     private Integer id;
     private String name;
     private String title;
-    private Integer age;
+    private String birthday;
 
     // For attaching data to report
     @Override
     public String toString() {
-        return "Employee: id=" + id + ", name=" + name +", title=" + title + ", age=" + age;
+        return "Employee: id=" + id + ", name=" + name +", title=" + title + ", birthday=" + birthday;
     }
 }

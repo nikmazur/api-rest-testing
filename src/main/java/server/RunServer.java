@@ -1,13 +1,12 @@
 package server;
 
-import helpers.ServerConfig;
-import org.aeonbits.owner.ConfigFactory;
 import org.mockserver.integration.ClientAndServer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.logging.LogManager;
 
 import static helpers.ServerConfig.CONF;
@@ -18,14 +17,13 @@ import static server.Expectations.*;
 public class RunServer {
 
     public static void main(String[] args) throws IOException {
-
         ClientAndServer.startClientAndServer(CONF.port());
 
         // Log to console if ran from main, to file if from test. Test sends 'testing' as arg.
-        if(args.length == 0)
-            logToConsole();
-        else
+        if(args.length != 0 && Objects.equals(args[0], "testing"))
             logToFile();
+        else
+            logToConsole();
 
         initEmployees();
 
