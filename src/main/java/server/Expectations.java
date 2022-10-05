@@ -37,7 +37,7 @@ public class Expectations {
     public static void addEmployee() {
         mockServerClient
                 .when(
-                        request().withMethod("PUT").withPath("/employees"))
+                        request().withMethod("PUT").withPath("/employees/add"))
                 .respond(
                         httpRequest -> {
                             // Deserialize from String in request body to POJO
@@ -58,7 +58,7 @@ public class Expectations {
     public static void delEmployee() {
         mockServerClient
                 .when(
-                        request().withMethod("DELETE").withPath("/employees").withHeaders(header("delete.*")))
+                        request().withMethod("POST").withPath("/employees/delete").withHeaders(header("delete.*")))
                 .respond(
                         httpRequest -> {
                             // Filter out the 'delete header' and get value

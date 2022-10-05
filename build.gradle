@@ -1,35 +1,27 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "io.qameta.allure:allure-gradle:2.8.1"
-    }
+plugins {
+    id 'java'
+    id 'io.qameta.allure' version '2.10.0'
 }
-
-apply plugin: 'java'
-apply plugin: 'io.qameta.allure'
 
 repositories {
+    gradlePluginPortal()
+    google()
     mavenCentral()
 }
-dependencies {
-    compile group: 'org.mock-server', name: 'mockserver-netty', version: '5.11.2'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.30'
-    compile group: 'org.aeonbits.owner', name: 'owner', version: '1.0.12'
-    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
-    testCompile group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
-    testCompile group: 'org.testng', name: 'testng', version: '7.4.0'
-    testCompile group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
-    testCompile group: 'io.qameta.allure', name: 'allure-testng', version: '2.16.0'
-}
 
-allure {
-    version = '2.8.1'
-    autoconfigure = true
-    reportDir = file("$buildDir/allure-report")
-    useTestNG { version = '2.0-BETA10' }
+dependencies {
+    runtimeOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.9.1'
+    implementation 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation group: 'org.mock-server', name: 'mockserver-netty', version: '5.14.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '2.0.2'
+    implementation group: 'org.aeonbits.owner', name: 'owner', version: '1.0.12'
+    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.2.0'
+    testImplementation group: 'org.testng', name: 'testng', version: '7.6.1'
+    testImplementation group: 'net.datafaker', name: 'datafaker', version: '1.6.0'
+    testImplementation group: 'io.qameta.allure', name: 'allure-testng', version: '2.19.0'
 }
 
 test {
