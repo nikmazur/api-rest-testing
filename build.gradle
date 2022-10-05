@@ -25,12 +25,12 @@ dependencies {
 
 }
 
-allure {
-    version = '2.10.0'
-    autoconfigure = true
-    reportDir = file("$buildDir/allure-report")
-    useTestNG { version = '2.0-BETA10' }
-}
+//allure {
+//    version = '2.10.0'
+//    autoconfigure = true
+//    reportDir = file("$buildDir/allure-report")
+//    useTestNG { version = '2.0-BETA10' }
+//}
 
 test {
     ignoreFailures = true
