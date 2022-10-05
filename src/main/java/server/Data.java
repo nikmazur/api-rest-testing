@@ -1,33 +1,41 @@
 package server;
 
 import models.Employee;
-import models.EmployeeList;
 
-import javax.xml.bind.JAXB;
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
 public class Data {
 
-    // List for storing data about employees
+    // List for storing data about our employees
     private static List<Employee> comp = new ArrayList<>();
 
     public static List<Employee> getComp() {
         return comp;
     }
 
-    // Populates List with initial Employees data
+    // Populates ArrayList with initial Employees data
     public static void initEmployees() {
-        try(BufferedReader reader = Files.newBufferedReader(Paths.get("employees.xml"))){
-            EmployeeList employeeList = JAXB.unmarshal(reader, EmployeeList.class);
-            comp = employeeList.getEmployees();
-        } catch (IOException e) {
-            e.printStackTrace();
+        for(int i = 1; i < 4; ++i) {
+            Properties prop = new Properties();
+            try {
+                Reader propReader = Files.newBufferedReader(Paths.get("randomEmployees/Empl" + i + ".properties"));
+                prop.load(propReader);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+
+            comp.add(new Employee(
+                    Integer.parseInt(prop.getProperty("ID")),
+                    prop.getProperty("Name"),
+                    prop.getProperty("Title"),
+                    prop.getProperty("Birthday")));
         }
     }
 
