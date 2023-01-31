@@ -1,11 +1,10 @@
 plugins {
     id 'java'
-    id 'io.qameta.allure' version '2.10.0'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 repositories {
     gradlePluginPortal()
-    google()
     mavenCentral()
 }
 
@@ -21,7 +20,7 @@ dependencies {
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.2.0'
     testImplementation group: 'org.testng', name: 'testng', version: '7.6.1'
     testImplementation group: 'net.datafaker', name: 'datafaker', version: '1.6.0'
-    testImplementation group: 'io.qameta.allure', name: 'allure-testng', version: '2.19.0'
+    testImplementation group: 'io.qameta.allure', name: 'allure-testng', version: '2.11.2'
 }
 
 test {

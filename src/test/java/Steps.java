@@ -1,10 +1,7 @@
-import helpers.AllureFilter;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-import io.restassured.specification.RequestSpecification;
 import models.Employee;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomUtils;
@@ -19,13 +16,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import static helpers.Methods.getRandomBirthday;
 import static helpers.ServerConfig.CONF;
-import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
@@ -66,34 +60,6 @@ public class Steps {
         }
     }
 
-    private static RequestSpecification mainRequest() {
-        return given().baseUri(RestAssured.baseURI)
-                .contentType(ContentType.JSON).accept(ContentType.JSON).filter(new AllureFilter());
-    }
-
-    @Step("Get server status")
-    public static int getStatus(String path) {
-        return mainRequest().basePath(path).get().getStatusCode();
-    }
-
-    @Step("Retrieve all employees, return as list")
-    public static List<Employee> getEmployees() {
-        return Arrays.asList(mainRequest().basePath("/employees").get()
-                .then().assertThat().statusCode(200).extract().as(Employee[].class));
-    }
-
-    @Step("Add new employee, return new list of employees")
-    public static List<Employee> addEmployee(Employee empl, int statusCode) {
-        return Arrays.asList(mainRequest().basePath("/employees/add").body(empl).put()
-                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
-    }
-
-    @Step("Request to delete an employee (by Name or Index)")
-    public static List<Employee> delEmployee(String type, Object id, int statusCode) {
-        return Arrays.asList(mainRequest().basePath("/employees/delete").header(type, id).post()
-                .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
-    }
-
     @Step("Generate new Employee with random data")
     public Employee genNewEmpl() {
         Employee empl = new Employee
@@ -102,7 +68,7 @@ public class Steps {
         return empl;
     }
 
-    //Separate method for assertions, needed to attach as step to report. String 'check' is added to step in place of {0}
+    //Separate wrapper method for assertions, needed to attach as step to report. String 'check' is added to step in place of {0}
     @Step("Verify that {0}")
     public void verify(String check, Object o1, Object o2, boolean equals) {
         if(equals)

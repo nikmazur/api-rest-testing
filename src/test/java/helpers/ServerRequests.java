@@ -31,7 +31,7 @@ public class ServerRequests {
 
     @Step("Add new employee, return new list of employees")
     public static List<Employee> addEmployee(Employee empl, int statusCode) {
-        return Arrays.asList(mainRequest().basePath("/employees").body(empl).put()
+        return Arrays.asList(mainRequest().basePath("/employees").body(empl).post()
                 .then().assertThat().statusCode(statusCode).extract().as(Employee[].class));
     }
 
