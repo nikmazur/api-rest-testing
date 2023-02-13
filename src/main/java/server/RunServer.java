@@ -36,21 +36,21 @@ public class RunServer {
     }
 
     private static void logToConsole() throws IOException {
-        String loggingConfiguration =
-                "java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n\n" +
-                        "handlers=org.mockserver.logging.StandardOutConsoleHandler\n" +
-                        "org.mockserver.logging.StandardOutConsoleHandler.level=ALL";
+        String loggingConfiguration = """
+                java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n
+                        handlers=org.mockserver.logging.StandardOutConsoleHandler
+                        org.mockserver.logging.StandardOutConsoleHandler.level=ALL""";
         LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(loggingConfiguration.getBytes(UTF_8)));
     }
 
     private static void logToFile() throws IOException {
-        String loggingConfiguration =
-                "java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n\n" +
-                        "handlers=java.util.logging.FileHandler\n" +
-                        "java.util.logging.FileHandler.level=ALL\n" +
-                        "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n" +
-                        "java.util.logging.FileHandler.pattern=" +
-                        new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_Server.log";
+        String loggingConfiguration = """
+                java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n
+                        handlers=java.util.logging.FileHandler
+                        java.util.logging.FileHandler.level=ALL
+                        java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
+                        java.util.logging.FileHandler.pattern=""" +
+                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_Server.log";
         LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(loggingConfiguration.getBytes(UTF_8)));
     }
 }
