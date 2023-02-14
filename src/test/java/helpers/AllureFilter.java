@@ -10,10 +10,12 @@ import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
 
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AllureFilter implements OrderedFilter {
 
-    private final String NEW_LINE = System.lineSeparator();
+    private final String line = System.lineSeparator();
 
     @Override
     public Response filter(FilterableRequestSpecification requestSpec,
@@ -29,15 +31,15 @@ public class AllureFilter implements OrderedFilter {
     private String requestTextBuilder(FilterableRequestSpecification req){
         StringBuilder text = new StringBuilder();
 
-        text.append("Method: ").append(req.getMethod()).append(NEW_LINE);
-        text.append("URI: ").append(req.getURI()).append(NEW_LINE);
+        text.append("Method: ").append(req.getMethod()).append(line);
+        text.append("URI: ").append(req.getURI()).append(line);
         text.append("Headers: ");
         req.getHeaders().asList().forEach(x ->
                 text.append(x.getName()).append("=").append(x.getValue()).append(", "));
-        text.append(NEW_LINE);
+        text.append(line);
 
         if(req.getBody() != null && !req.getBody().toString().isEmpty())
-            text.append("Body: ").append(NEW_LINE).append(textToJson(req.getBody().toString())).append(NEW_LINE);
+            text.append("Body: ").append(line).append(textToJson(req.getBody().toString())).append(line);
 
         return text.toString();
     }
@@ -58,7 +60,7 @@ public class AllureFilter implements OrderedFilter {
     }
 
     private String responseTextBuilder(Response resp) {
-        return resp.statusLine() + NEW_LINE + textToJson(resp.asString());
+        return resp.statusLine() + line + textToJson(resp.asString());
     }
 
     private String textToJson(String text) {
@@ -66,7 +68,8 @@ public class AllureFilter implements OrderedFilter {
             ObjectMapper mapper = new ObjectMapper();
             Object json = mapper.readValue(text, Object.class);
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
-        } catch (JsonProcessingException ignored) {
+        } catch (JsonProcessingException jpe) {
+            Logger.getGlobal().log(Level.SEVERE, jpe.getMessage());
         }
         return "";
     }

@@ -1,11 +1,13 @@
 package helpers;
 
 import io.qameta.allure.Step;
-import org.apache.commons.lang3.RandomUtils;
+import lombok.experimental.UtilityClass;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@UtilityClass
 public class Methods {
 
     // Method for obtaining random date within start year to now (minus minimum working age).
@@ -15,7 +17,7 @@ public class Methods {
         long minDay = LocalDate.of(startYear, 1, 1).toEpochDay();
         long maxDay = LocalDate.now().minusYears(minAge).toEpochDay();
         return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
-                LocalDate.ofEpochDay(minDay + RandomUtils.nextLong(minDay, maxDay)));
+                LocalDate.ofEpochDay(minDay + new SecureRandom().nextLong(minDay, maxDay)));
     }
 
     @Step("Compare 2 dates: {0} and {1}")
