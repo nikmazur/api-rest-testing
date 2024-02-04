@@ -14,8 +14,8 @@ public class Methods {
     // Breaks for earlier than 1970, might switch to JodaTime.
     @Step("Generate random birthday starting from year {0}")
     public static String getRandomBirthday(int startYear, int minAge) {
-        long minDay = LocalDate.of(startYear, 1, 1).toEpochDay();
-        long maxDay = LocalDate.now().minusYears(minAge).toEpochDay();
+        var minDay = LocalDate.of(startYear, 1, 1).toEpochDay();
+        var maxDay = LocalDate.now().minusYears(minAge).toEpochDay();
         return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
                 LocalDate.ofEpochDay(minDay + RandomUtils.nextLong(minDay, maxDay)));
     }

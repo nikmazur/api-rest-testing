@@ -59,9 +59,9 @@ public class Expectations {
                 .respond(
                         httpRequest -> {
                             // Deserialize from String in request body to POJO
-                            Employee newEmpl = mapper.readValue((String) httpRequest.getBody().getValue(), Employee.class);
+                            var newEmpl = mapper.readValue((String) httpRequest.getBody().getValue(), Employee.class);
                             // Checks that Name is not empty, Title is not numeric
-                            if (!newEmpl.getName().isEmpty() && newEmpl.getName().trim().length() > 0 &&
+                            if (!newEmpl.getName().isEmpty() && !newEmpl.getName().trim().isEmpty() &&
                                     !NumberUtils.isCreatable(newEmpl.getTitle())) {
                                 newEmpl.setName(newEmpl.getName().replace(",", ""));
                                 addEmpl(newEmpl);
@@ -80,7 +80,7 @@ public class Expectations {
                 .respond(
                         httpRequest -> {
                             // Filter out the 'delete header' and get value
-                            String value = httpRequest.getHeaderList().stream()
+                            var value = httpRequest.getHeaderList().stream()
                                     .filter(x -> x.getName().toString().contains("delete"))
                                     .findFirst().get().getValues().get(0).toString();
 

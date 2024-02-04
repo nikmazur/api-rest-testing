@@ -36,7 +36,7 @@ public class RunServer {
     }
 
     private static void logToConsole() throws IOException {
-        String loggingConfiguration = """
+        var loggingConfiguration = """
                 java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n
                         handlers=org.mockserver.logging.StandardOutConsoleHandler
                         org.mockserver.logging.StandardOutConsoleHandler.level=ALL""";
@@ -44,7 +44,7 @@ public class RunServer {
     }
 
     private static void logToFile() throws IOException {
-        String loggingConfiguration = """
+        var loggingConfiguration = """
                 java.util.logging.SimpleFormatter.format=[%1$tF %1$tT.%1$tL]  %3$s  %4$s  %5$s %6$s%n
                         handlers=java.util.logging.FileHandler
                         java.util.logging.FileHandler.level=ALL

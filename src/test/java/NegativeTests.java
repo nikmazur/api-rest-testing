@@ -29,7 +29,7 @@ public class NegativeTests extends Steps {
     @Test(description =  "Bad input: Numbers in text")
     @Description("Add an employee, title has number instead of letters")
     public void negTextInput() {
-        Employee badTitle = new Employee(RandomUtils.nextInt(1000, 10000), faker.name().fullName(),
+        var badTitle = new Employee(RandomUtils.nextInt(1000, 10000), faker.name().fullName(),
                 RandomStringUtils.randomNumeric(3), getRandomBirthday(1970, 18));
         addEmployee(badTitle, 400);
     }
@@ -37,7 +37,7 @@ public class NegativeTests extends Steps {
     @Test(description =  "Bad input: Blank name")
     @Description("Add an employee, name does not contain any letters, only spaces")
     public void negTextSpaces() {
-        Employee noName = new Employee
+        var noName = new Employee
                 (RandomUtils.nextInt(1000, 10000), "  ", faker.company().profession(), getRandomBirthday(1970, 18));
         addEmployee(noName, 400);
     }

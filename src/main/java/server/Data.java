@@ -1,5 +1,6 @@
 package server;
 
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import models.Employee;
 
@@ -19,11 +20,8 @@ import java.util.logging.Logger;
 public class Data {
 
     // List for storing data about our employees
+    @Getter
     private static List<Employee> comp = new ArrayList<>();
-
-    public static List<Employee> getComp() {
-        return comp;
-    }
 
     // Populates ArrayList with initial Employees data
     public static void initEmployees() {

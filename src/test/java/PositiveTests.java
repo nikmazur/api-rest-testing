@@ -47,7 +47,7 @@ public class PositiveTests extends Steps {
     @Test(description =  "Add new employee")
     @Description("Check the functionality of adding a new employee.")
     public void addNewEmployee() {
-        Employee newEmpl = genNewEmpl();
+        var newEmpl = genNewEmpl();
         verify("the new employee is listed in the returned list",
                 addEmployee(newEmpl, 201).stream().anyMatch(x -> x.equals(newEmpl)), true, true);
     }
@@ -74,9 +74,9 @@ public class PositiveTests extends Steps {
     @Description("Add a new employee with the Name separated by a comma. " +
             "Comma will be removed and the employee will be added successfully.")
     public void nameComma() {
-        String commaName = faker.name().firstName() + ", " + faker.name().lastName();
+        var commaName = faker.name().firstName() + ", " + faker.name().lastName();
 
-        Employee newEmpl = new Employee
+        var newEmpl = new Employee
                 (RandomUtils.nextInt(1, 10000), commaName, faker.company().profession(), getRandomBirthday(1970, 18));
 
         verify("name was added without a comma",

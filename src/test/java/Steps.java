@@ -45,8 +45,8 @@ public class Steps {
 
         // Writes random employee data to local prop files (will be used in the next run)
         for(int i = 1; i < 4; ++i) {
-            Employee empl = genNewEmpl();
-            Properties emplProp = new Properties();
+            var empl = genNewEmpl();
+            var emplProp = new Properties();
 
             emplProp.setProperty("ID", String.valueOf(empl.getId()));
             emplProp.setProperty("Name", empl.getName());
@@ -62,7 +62,7 @@ public class Steps {
 
     @Step("Generate new Employee with random data")
     public Employee genNewEmpl() {
-        Employee empl = new Employee
+        var empl = new Employee
                 (RandomUtils.nextInt(1000, 10000), faker.name().fullName(), faker.company().profession(), getRandomBirthday(1971, 18));
         Allure.addAttachment("New Employee Data", empl.toString());
         return empl;
@@ -81,7 +81,7 @@ public class Steps {
     @DataProvider
     public Object[][] getEmpl()
     {
-        Object[][] data = new Object[3][2];
+        var data = new Object[3][2];
 
         //Read employee data from local files
         for(int i = 1; i < 4; ++i) {
